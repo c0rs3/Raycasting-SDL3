@@ -10,17 +10,9 @@
 #include "SDL3/SDL_timer.h"
 #include "SDL3/SDL_video.h"
 #include "map.hpp"
+#include "SDL3/SDL_keyboard.h"
 
 #define PI 3.14159f
-
-struct Keys {
-	Keys() = default;
-
-	int w = 0;
-	int a = 0;
-	int s = 0;
-	int d = 0;
-};
 
 class Camera {
 public:
@@ -65,6 +57,10 @@ public:
 
 		bool quit = false;
 		while (!quit) {
+			SDL_Event event;
+			SDL_PollEvent(&event);
+			const bool* keyState = SDL_GetKeyboardState(nullptr);
+
 			SDL_RenderClear(mRender_context);
 			for (unsigned int x = 0; x < screenWidth; ++x) {
 				double mCameraX = 2 * x / double(screenWidth) - 1;
@@ -216,8 +212,7 @@ public:
 			neg_sRotSpeed = sin(-mCamera.rotSpeed * frameTime * 5);
 			neg_cRotSpeed = cos(-mCamera.rotSpeed * frameTime * 5);
 
-			SDL_Event event;
-			SDL_PollEvent(&event);
+
 			// User requests quit
 			if (event.type == SDL_EVENT_QUIT || event.key.scancode == SDL_SCANCODE_ESCAPE) {
 				quit = true;
@@ -225,21 +220,21 @@ public:
 				SDL_DestroyRenderer(mRender_context);
 			}
 			// move forward if no wall in front of you
-			if (event.key.scancode == SDL_SCANCODE_UP) {
+			if (keyState[SDL_SCANCODE_UP]) {
 				if (!map.mData[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed)][int(mCamera.posY)]) mCamera.posX \
 					+= mCamera.dirX * mCamera.moveSpeed;
 				if (!map.mData[int(mCamera.posX)][int(mCamera.posY + mCamera.dirY * mCamera.moveSpeed)]) mCamera.posY \
 					+= mCamera.dirY * mCamera.moveSpeed;
 			}
 			// move backwards if no wall behind you
-			if (event.key.scancode == SDL_SCANCODE_DOWN) {
+			if (keyState[SDL_SCANCODE_DOWN]) {
 				if (!map.mData[int(mCamera.posX - mCamera.dirX * mCamera.moveSpeed)][int(mCamera.posY)]) mCamera.posX \
 					-= mCamera.dirX * mCamera.moveSpeed;
 				if (!map.mData[int(mCamera.posX)][int(mCamera.posY - mCamera.dirY * mCamera.moveSpeed)]) mCamera.posY \
 					-= mCamera.dirY * mCamera.moveSpeed;
 			}
 
-			if (event.key.scancode == SDL_SCANCODE_RIGHT) {
+			if (keyState[SDL_SCANCODE_RIGHT]) {
 				// both mCamera direction and mCamera plane must be rotated
 				double oldDirX = mCamera.dirX;
 				mCamera.dirX = mCamera.dirX * neg_cRotSpeed - mCamera.dirY * neg_sRotSpeed;
@@ -248,7 +243,7 @@ public:
 				mCamera.planeX = mCamera.planeX * neg_cRotSpeed - mCamera.planeY * neg_sRotSpeed;
 				mCamera.planeY = oldPlaneX * neg_sRotSpeed + mCamera.planeY * neg_cRotSpeed;
 			}
-			if (event.key.scancode == SDL_SCANCODE_LEFT) {
+			if (keyState[SDL_SCANCODE_LEFT]) {
 				// both mCamera direction and mCamera plane must be rotated
 				double oldDirX = mCamera.dirX;
 				mCamera.dirX = mCamera.dirX * cRotSpeed - mCamera.dirY * sRotSpeed;
@@ -256,6 +251,7 @@ public:
 				double oldPlaneX = mCamera.planeX;
 				mCamera.planeX = mCamera.planeX * cRotSpeed - mCamera.planeY * sRotSpeed;
 				mCamera.planeY = oldPlaneX * sRotSpeed + mCamera.planeY * cRotSpeed;
+				
 			}
 			SDL_RenderPresent(mRender_context);
 		}
