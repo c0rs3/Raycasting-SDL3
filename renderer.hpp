@@ -2,15 +2,15 @@
 #define RENDERER_
 #include <cstdlib>
 #include <iostream>
-#include <ostream>
+#include <string>
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_scancode.h"
 #include "SDL3/SDL_timer.h"
 #include "SDL3/SDL_video.h"
-#include "map.hpp"
 #include "SDL3/SDL_keyboard.h"
+#include "map.hpp"
 
 #define PI 3.14159f
 
@@ -34,7 +34,7 @@ private:
 class Renderer {
 public:
 	Renderer(const Camera& camera, unsigned int screenWidth, unsigned int screenHeight)
-		:mCamera(camera), screenWidth(screenWidth), screenHeight(screenHeight) {
+		:mCamera(camera), mWindow_context(nullptr), mRender_context(nullptr), screenWidth(screenWidth), screenHeight(screenHeight) {
 	}
 
 	int render(Map& map) {
@@ -201,8 +201,8 @@ public:
 			double frameTime = (time - oldTime) / 1000.0;
 			double fps = 1.0f / frameTime;
 			if (int(SDL_GetTicks() / 1000) == 1)
-				std::clog << "\r" << ((1.0 / frameTime) > 100.0f ? 100.0f : (1.0 / frameTime)) << ((1.0 / frameTime) > 100.0f ? "(>=100)" : "") << std::flush;
-
+				std::clog << "\r" << (1.0 / frameTime) << std::flush;
+				// std::clog << "\r" << ((1.0 / frameTime) > 100.0f ? ">=100.0" : std::to_string(1.0/frameTime))<< std::flush;
 			if (frameTime < 0.001f) frameTime = 0.001f;
 			if (frameTime > 0.05f)  frameTime = 0.05f;
 
