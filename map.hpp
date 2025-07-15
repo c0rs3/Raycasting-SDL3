@@ -1,3 +1,6 @@
+#ifndef RAYCASTER_MAP
+#define RAYCASTER_MAP
+
 struct Map {
 	Map() = default;
 
@@ -23,3 +26,5 @@ struct Map {
 	// int** mCeilingLayer;
 	// int** mWallLayer;
 };
+
+#endif // !RAYCASTER_MAP

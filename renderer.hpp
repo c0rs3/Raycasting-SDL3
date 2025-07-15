@@ -1,8 +1,8 @@
-﻿#ifndef RENDERER_
-#define RENDERER_
+﻿#ifndef	RAYCASTER_RENDERER
+#define RAYCASTER_RENDERER
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
-#include <string>
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_render.h"
