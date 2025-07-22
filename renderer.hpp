@@ -308,6 +308,7 @@ public:
 			}
 			SDL_RenderPresent(mRender_context);
 		}
+		SDL_DestroyTexture(render_texture);
 		return 0;
 	}
 
