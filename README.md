@@ -1,7 +1,7 @@
 # TODO
 - Textures
     - Basic textures DONE
+    - image loading PROG
     - Abstractions 
-    - image loading
 - Map editor
 - Advanced graphics -> lighting, shadows, fog

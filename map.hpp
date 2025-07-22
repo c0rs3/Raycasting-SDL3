@@ -10,8 +10,7 @@ struct Map {
 	* DO NOT DELETE the pointers used in the constructor
 	*/
 	Map(int** map, unsigned int mapWidth, unsigned int mapHeight)
-		: mData(map), mapWidth(mapWidth), mapHeight(mapHeight) {
-	}
+		: mData(map), mapWidth(mapWidth), mapHeight(mapHeight) {}
 
 	~Map() {
 		for (size_t i = 0; i < mapWidth; i++)
@@ -27,4 +26,4 @@ struct Map {
 	// int** mWallLayer;
 };
 
-#endif // !RAYCASTER_MAP
+#endif
