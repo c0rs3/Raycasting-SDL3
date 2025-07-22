@@ -12,6 +12,7 @@ include_directories("${SDL3_ROOT}/include")
 
 link_directories("${SDL3_ROOT}/lib")
 
+
 add_executable(Raycaster-SDL "main.cpp")
 
 target_link_libraries(Raycaster-SDL SDL3)
