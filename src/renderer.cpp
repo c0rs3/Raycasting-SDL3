@@ -1,9 +1,5 @@
 #include "renderer.h"
 
-inline uint32_t makeRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {
-    return (r << 24) | (g << 16) | (b << 8) | a;
-}
-
 Renderer::~Renderer() {
     delete[] buffer;
 }
@@ -11,18 +7,23 @@ Renderer::~Renderer() {
 int Renderer::render(Map& map) {
     buffer = new uint32_t[screenHeight * screenWidth];
     memset(buffer, 0, screenWidth * screenHeight * sizeof(uint32_t));
-    std::vector<RGBPixel> text1 = loadPNG("assets/brown.png");
-    std::vector<int> texture[8];
-    for (int i = 0; i < 8; i++) texture[i].resize(texWidth * texHeight);
-    for (int x = 0; x < texWidth; x++) {
-        for (int y = 0; y < texHeight; y++) {
-            RGBPixel texel = text1[texWidth * y + x];
-            texture[0][texWidth * y + x] = makeRGBA(texel.r, texel.b, texel.g);
-        }
+    std::vector<Texture> textureList = std::vector<Texture>();
+    textureList.resize(8);
+    /*
+    for (unsigned int i = 0; i < 8; i++)
+    textureList[i].addTexturePNG("assets/brown.png", texHeight, texWidth);
+
+    */
+    unsigned int fileIterationCount = 0;
+    for (const auto& entry : std::filesystem::directory_iterator("assets")) {
+        std::filesystem::path outfilename = entry.path();
+        
+        std::clog << "Compiled texture: " << outfilename.string()<< std::endl;
+        textureList[fileIterationCount].addTexturePNG(outfilename.string(), texHeight, texWidth);
+
+        fileIterationCount++;
     }
 
-    for (size_t i = 1; i < 8; i++)
-        texture[i] = texture[0];
 
     double time = 0, oldTime = 0;
     double sRotSpeed;
@@ -32,12 +33,15 @@ int Renderer::render(Map& map) {
     double neg_cRotSpeed;
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-        std::clog << "Failed to init SDL video: " << SDL_GetError() << std::endl;
+        std::clog << "Failed to init SDL video: "
+            << SDL_GetError() << std::endl;
         return -1;
     }
 
-    if (!SDL_CreateWindowAndRenderer("Ray-casting", screenWidth, screenHeight, 0, &mWindow_context, &mRender_context)) {
-        std::clog << "Failed to init Window and/or Renderer" << SDL_GetError() << std::endl;
+    if (!SDL_CreateWindowAndRenderer("Ray-casting", screenWidth,
+        screenHeight, 0, &mWindow_context, &mRender_context)) {
+        std::clog << "Failed to init Window and/or Renderer"
+            << SDL_GetError() << std::endl;
         return -1;
     }
 
@@ -138,14 +142,19 @@ int Renderer::render(Map& map) {
             for (int y = drawStart; y < drawEnd; y++) {
                 int texY = (int)texPos & (texHeight - 1);
                 texPos += step;
-                Uint32 color = texture[texNum][texHeight * texY + texX];
-                //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
-                if (side == 1) color = (color >> 1) & 8355711;
+                Uint32 color;
+                if (texNum > textureList.size() - 1) {
+                    color = textureList[textureList.size() - 1].mData[texHeight * texY + texX];
+                }
+                else {
+                    color = textureList[texNum].mData[texHeight * texY + texX];
+                }
                 buffer[y * screenWidth + x] = color;
             }
         }
         SDL_RenderClear(mRender_context);
-        if (SDL_UpdateTexture(render_texture, nullptr, buffer, screenWidth * sizeof(uint32_t)) < 0) {
+        if (SDL_UpdateTexture(render_texture, nullptr, buffer,
+            screenWidth * sizeof(uint32_t)) < 0) {
             std::clog << "UpdateTexture failed: " << SDL_GetError() << std::endl;
         }
 

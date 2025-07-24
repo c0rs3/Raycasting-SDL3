@@ -1,6 +1,12 @@
 #include "texture.h"
+
+// STB Preprocessor must be kept here or multiple definitions will occur
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+uint32_t makeRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    return (r << 24) | (g << 16) | (b << 8) | a;
+}
 
 std::vector<RGBPixel> loadPNG(const std::string& filename) {
     int width, height, channels;
@@ -37,7 +43,22 @@ std::vector<RGBPixel> loadPNG(const std::string& filename) {
 std::ostream& operator<<(std::ostream& stream, RGBPixel pixel) {
     stream << " R: " << (int)pixel.r
         << " G: " << (int)pixel.g
-        << " B: " << (int)pixel.b<< std::endl;
+        << " B: " << (int)pixel.b << std::endl;
     return stream;
 }
 
+Texture::Texture() = default;
+Texture::~Texture() = default;
+
+void Texture::addTexturePNG(const std::string& filePath, unsigned int texHeight, unsigned int texWidth) {
+    std::vector<RGBPixel> pixels;
+    pixels.resize(texHeight * texWidth);
+    mData.resize(texHeight * texWidth);
+    pixels = loadPNG(filePath);
+    for (int x = 0; x < texWidth; x++) {
+        for (int y = 0; y < texHeight; y++) {
+            RGBPixel texel = pixels[texWidth * y + x];
+            mData[texWidth * y + x] = makeRGBA(texel.r, texel.b, texel.g);
+        }
+    }
+};
