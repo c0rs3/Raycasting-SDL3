@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <stdint.h>
+#include <filesystem>
+#include <string>
+#include <sys/stat.h>
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_render.h"
