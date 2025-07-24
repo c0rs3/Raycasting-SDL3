@@ -47,5 +47,5 @@ int main() {
     Map layout = Map(properMap, mapWidth, mapHeight);
     Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
     Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
-    // renderer.render(layout);
+    renderer.render(layout);
 }

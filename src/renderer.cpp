@@ -11,42 +11,18 @@ Renderer::~Renderer() {
 int Renderer::render(Map& map) {
     buffer = new uint32_t[screenHeight * screenWidth];
     memset(buffer, 0, screenWidth * screenHeight * sizeof(uint32_t));
-
+    std::vector<RGBPixel> text1 = loadPNG("assets/brown.png");
     std::vector<int> texture[8];
     for (int i = 0; i < 8; i++) texture[i].resize(texWidth * texHeight);
     for (int x = 0; x < texWidth; x++) {
         for (int y = 0; y < texHeight; y++) {
-            int xorcolor = (x * 256 / texWidth) ^ (y * 256 / texHeight);
-            int ycolor = y * 256 / texHeight;
-            int xycolor = y * 128 / texHeight + x * 128 / texWidth;
-
-            // Proper color building with alpha = 255
-            texture[0][texWidth * y + x] = makeRGBA(
-                254 * (x != y && x != texWidth - y), 0, 0
-            );
-            texture[1][texWidth * y + x] = makeRGBA(
-                xycolor, xycolor, xycolor
-            );
-            texture[2][texWidth * y + x] = makeRGBA(
-                xycolor, xycolor, 0
-            );
-            texture[3][texWidth * y + x] = makeRGBA(
-                xorcolor, xorcolor, xorcolor
-            );
-            texture[4][texWidth * y + x] = makeRGBA(
-                0, xorcolor, 0
-            );
-            texture[5][texWidth * y + x] = makeRGBA(
-                192 * (x % 16 && y % 16), 0, 0
-            );
-            texture[6][texWidth * y + x] = makeRGBA(
-                ycolor, 0, 0
-            );
-            texture[7][texWidth * y + x] = makeRGBA(
-                128, 128, 128
-            );
+            RGBPixel texel = text1[texWidth * y + x];
+            texture[0][texWidth * y + x] = makeRGBA(texel.r, texel.b, texel.g);
         }
     }
+
+    for (size_t i = 1; i < 8; i++)
+        texture[i] = texture[0];
 
     double time = 0, oldTime = 0;
     double sRotSpeed;
