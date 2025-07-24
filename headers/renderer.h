@@ -1,8 +1,9 @@
 ﻿#ifndef	RAYCASTER_RENDERER
 #define RAYCASTER_RENDERER
+
 #include "raycasterutil.h"
-#include "map.hpp"
-#include "texture.hpp"
+#include "map.h"
+#include "texture.h"
 
 #define SCREENWIDTH 1720
 #define SCREENHEIGHT 1080

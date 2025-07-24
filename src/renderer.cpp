@@ -1,4 +1,8 @@
-#include "renderer.hpp"
+#include "renderer.h"
+
+inline uint32_t makeRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {
+    return (r << 24) | (g << 16) | (b << 8) | a;
+}
 
 Renderer::~Renderer() {
     delete[] buffer;
@@ -176,7 +180,6 @@ int Renderer::render(Map& map) {
         oldTime = time;
         time = SDL_GetTicks();
         double frameTime = (time - oldTime) / 1000.0;
-        double fps = 1.0f / frameTime;
         if (int(SDL_GetTicks() / 1000) == 1)
             std::clog << "\r" << (1.0 / frameTime) << std::flush;
 

@@ -1,13 +1,6 @@
-#ifndef RAYCASTER_TEXTURE
-#define RAYCASTER_TEXTURE
-
+#include "texture.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-struct RGBPixel {
-    uint8_t red;
-    uint8_t green;
-    uint8_t blue;
-};
-
 
 void loadPNG(const std::string& filename) {
     int width, height, channels;
@@ -40,13 +33,3 @@ void loadPNG(const std::string& filename) {
 }
 
 
-
-
-inline uint32_t makeRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {
-    return (r << 24) | (g << 16) | (b << 8) | a;
-}
-
-
-
-
-#endif
