@@ -42,8 +42,8 @@ int main() {
     float dirX = -1, dirY = 0;       // initial direction vector
     float planeX = 0, planeY = 1;    // camera plane
 
-    float moveSpeed = 0.005f; // the constant value is in squares/second
-    float rotSpeed = 0.1f;  // the constant value is in radians/second
+    float moveSpeed = 0.015f; // the constant value is in squares/second
+    float rotSpeed = 0.15f;  // the constant value is in radians/second
     Map layout = Map(properMap, mapWidth, mapHeight);
     Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
     Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
