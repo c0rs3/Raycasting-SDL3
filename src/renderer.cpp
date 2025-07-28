@@ -17,8 +17,8 @@ int Renderer::render(Map& map) {
     unsigned int fileIterationCount = 0;
     for (const auto& entry : std::filesystem::directory_iterator("assets")) {
         std::filesystem::path outfilename = entry.path();
-        
-        std::clog << "Compiled texture: " << outfilename.string()<< std::endl;
+
+        std::clog << "Compiled texture: " << outfilename.string() << std::endl;
         textureList[fileIterationCount].addTexturePNG(outfilename.string(), texHeight, texWidth);
 
         fileIterationCount++;

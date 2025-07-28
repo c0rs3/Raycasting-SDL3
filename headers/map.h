@@ -12,18 +12,12 @@ struct Map {
 	Map(int** map, unsigned int mapWidth, unsigned int mapHeight)
 		: mData(map), mapWidth(mapWidth), mapHeight(mapHeight) {}
 
-	~Map() {
-		for (size_t i = 0; i < mapWidth; i++)
-			delete[] mData[i];
-		delete[] mData;
-	}
-
+	~Map();
+	void addMap(const unsigned int& height, const unsigned int& width);
+	void printMap();
 	int** mData;
 	unsigned int mapWidth;
 	unsigned int mapHeight;
-	// int** mFloorLayer;
-	// int** mCeilingLayer;
-	// int** mWallLayer;
 };
 
 #endif

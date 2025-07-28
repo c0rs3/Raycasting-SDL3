@@ -2,6 +2,7 @@
 #define RAYCASTER_UTIL  
 #include <cmath>
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include <stdint.h>
 #include <filesystem>
