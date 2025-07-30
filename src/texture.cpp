@@ -52,7 +52,7 @@ Texture::~Texture() = default;
 
 void Texture::addTexturePNG(const std::string& filePath, unsigned int texHeight, unsigned int texWidth) {
     if (!std::filesystem::exists(filePath)){
-        std::cerr << "Incorrect path! " << std::endl;
+        throw std::runtime_error("Invalid path! " + filePath);
     }
     std::vector<RGBPixel> pixels;
     pixels.resize(texHeight * texWidth);

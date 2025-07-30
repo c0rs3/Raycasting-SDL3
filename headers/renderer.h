@@ -7,10 +7,13 @@
 
 #define SCREENWIDTH 1720
 #define SCREENHEIGHT 1080
+
 #define mapWidth 24
 #define mapHeight 24
+
 #define texWidth 64
 #define texHeight 64
+#define TEXTURE_ASSET_PATH "assets/textures"
 #define PIXEL_FORMAT SDL_PIXELFORMAT_RGBA8888
 
 class Camera {

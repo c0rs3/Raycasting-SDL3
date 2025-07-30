@@ -2,7 +2,7 @@
 #define RAYCASTER_UTIL  
 
 // Flags
-#define USE_MAP_EDITOR
+// #define USE_MAP_EDITOR
 
 // STL
 #include <cmath>

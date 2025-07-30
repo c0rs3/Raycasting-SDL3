@@ -12,16 +12,11 @@ int Renderer::render(Map& map) {
 
     unsigned int fileIterationCount = 0;
     std::clog << "Working dir: " << std::filesystem::current_path() << '\n';
-    for (const auto& entry : std::filesystem::directory_iterator("assets")) {
+    for (const auto& entry : std::filesystem::directory_iterator(TEXTURE_ASSET_PATH)) {
         std::filesystem::path outfilename = entry.path();
-        try {
-            textureList[fileIterationCount].addTexturePNG(outfilename.string(), texHeight, texWidth);
-        }
-        catch (const std::exception& e) {
-            std::cerr << e.what() << '\n';
-        }
+        textureList[fileIterationCount].addTexturePNG(outfilename.string(), texHeight, texWidth);
 
-        std::clog << "Compiled texture: " << outfilename.string() << std::endl;
+        std::clog << "Compiled texture: " << outfilename.string() << " || Index:" << fileIterationCount << std::endl;
 
         fileIterationCount++;
     }
@@ -57,6 +52,53 @@ int Renderer::render(Map& map) {
         const bool* keyState = SDL_GetKeyboardState(nullptr);
         memset(buffer, 0, screenWidth * screenHeight * sizeof(uint32_t));
 
+        //FLOOR CASTING
+        for (int y = 0; y < screenHeight; y++) {
+            // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
+            float rayDirX0 = mCamera.dirX - mCamera.planeX;
+            float rayDirY0 = mCamera.dirY - mCamera.planeY;
+            float rayDirX1 = mCamera.dirX + mCamera.planeX;
+            float rayDirY1 = mCamera.dirY + mCamera.planeY;
+
+            // Current y position compared to the center of the screen (the horizon)
+            int p = y - screenHeight / 2;
+
+            // Vertical position of the camera.
+            float posZ = 0.75 * screenHeight;
+
+            float rowDistance = posZ / p;
+
+            float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / screenWidth;
+            float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / screenWidth;
+
+            float floorX = mCamera.posX + rowDistance * rayDirX0;
+            float floorY = mCamera.posY + rowDistance * rayDirY0;
+
+            for (int x = 0; x < screenWidth; ++x) {
+                int cellX = (int)(floorX);
+                int cellY = (int)(floorY);
+
+                int texX = (int)(texWidth * (floorX - cellX)) & (texWidth - 1);
+                int texY = (int)(texHeight * (floorY - cellY)) & (texHeight - 1);
+
+                floorX += floorStepX;
+                floorY += floorStepY;
+
+                unsigned int floorTexture = 7;
+                unsigned int ceilingTexture = 5;
+                Uint32 color;
+
+                // floor
+                color = textureList[floorTexture].mData[texHeight * texY + texX];
+                buffer[y * screenWidth + x] = color;
+
+                //ceiling
+                color = textureList[ceilingTexture].mData[texHeight * texY + texX];
+                buffer[(screenHeight * screenWidth - (y + 1) * screenWidth) + x] = color;
+            }
+        }
+
+        // Wall casting
         for (unsigned int x = 0; x < screenWidth; ++x) {
             double mCameraX = 2 * x / double(screenWidth) - 1;
             double rayDirX = mCamera.dirX + mCamera.planeX * mCameraX;
@@ -111,13 +153,6 @@ int Renderer::render(Map& map) {
                     mapY += stepY;
                     side = 1;
                 }
-                /*
-                if (mapX < 0 || mapY < 0 || mapX > mapWidth || mapY > mapHeight) {
-                    std::cerr << "Out of bounds!" << std::endl;
-                    return -1;
-                }
-                */
-                
                 if (map.mData[mapX][mapY] > 0) hit = 1;
             }
 
@@ -160,6 +195,7 @@ int Renderer::render(Map& map) {
                 buffer[y * screenWidth + x] = color;
             }
         }
+
         SDL_RenderClear(mRender_context);
         if (SDL_UpdateTexture(render_texture, nullptr, buffer,
             screenWidth * sizeof(uint32_t)) < 0) {
