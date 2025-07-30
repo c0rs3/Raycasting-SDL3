@@ -8,7 +8,7 @@
 
 - [x] Fundamentals, Base Engine
 - [x] Textures
-- [ ] Floor & Ceiling rendering
+- [x] Floor & Ceiling rendering
 - [ ] Map editor
   - [x] Terminal Editor
   - [ ] ImGui Editor
