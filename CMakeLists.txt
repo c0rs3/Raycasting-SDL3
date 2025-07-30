@@ -11,17 +11,28 @@ add_compile_options(-Wno-bool-compare)
 add_compile_options(-Wno-sign-compare)
 
 # SDL3
-set(SDL3_ROOT "${CMAKE_SOURCE_DIR}/SDL3")
+set(SDL3_ROOT "${CMAKE_SOURCE_DIR}/dependencies/SDL3")
+set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/dependencies/imgui")
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/headers/*.h")
 
-add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES})
+file(GLOB IMGUI_SRC
+    "${IMGUI_ROOT}/*.cpp"
+    "${IMGUI_ROOT}/backends/imgui_impl_sdl3.cpp"
+    "${IMGUI_ROOT}/backends/imgui_impl_opengl3.cpp"
+)
+
+
+add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES} ${IMGUI_SRC})
 
 target_include_directories(Raycaster-SDL PRIVATE
     "${SDL3_ROOT}/include"
     "${CMAKE_SOURCE_DIR}/headers"
+    "${IMGUI_ROOT}"
+    "${IMGUI_ROOT}/backends"
 )
 
 target_link_directories(Raycaster-SDL PRIVATE "${SDL3_ROOT}/lib")
-target_link_libraries(Raycaster-SDL PRIVATE SDL3)
+target_link_libraries(Raycaster-SDL PRIVATE SDL3 opengl32)
+
