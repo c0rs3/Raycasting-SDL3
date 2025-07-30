@@ -9,21 +9,22 @@ int Renderer::render(Map& map) {
     memset(buffer, 0, screenWidth * screenHeight * sizeof(uint32_t));
     std::vector<Texture> textureList = std::vector<Texture>();
     textureList.resize(8);
-    /*
-    for (unsigned int i = 0; i < 8; i++)
-    textureList[i].addTexturePNG("assets/brown.png", texHeight, texWidth);
 
-    */
     unsigned int fileIterationCount = 0;
+    std::clog << "Working dir: " << std::filesystem::current_path() << '\n';
     for (const auto& entry : std::filesystem::directory_iterator("assets")) {
         std::filesystem::path outfilename = entry.path();
+        try {
+            textureList[fileIterationCount].addTexturePNG(outfilename.string(), texHeight, texWidth);
+        }
+        catch (const std::exception& e) {
+            std::cerr << e.what() << '\n';
+        }
 
         std::clog << "Compiled texture: " << outfilename.string() << std::endl;
-        textureList[fileIterationCount].addTexturePNG(outfilename.string(), texHeight, texWidth);
 
         fileIterationCount++;
     }
-
 
     double time = 0, oldTime = 0;
     double sRotSpeed;
@@ -110,6 +111,13 @@ int Renderer::render(Map& map) {
                     mapY += stepY;
                     side = 1;
                 }
+                /*
+                if (mapX < 0 || mapY < 0 || mapX > mapWidth || mapY > mapHeight) {
+                    std::cerr << "Out of bounds!" << std::endl;
+                    return -1;
+                }
+                */
+                
                 if (map.mData[mapX][mapY] > 0) hit = 1;
             }
 

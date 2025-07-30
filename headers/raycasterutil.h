@@ -1,5 +1,6 @@
 #ifndef RAYCASTER_UTIL
 #define RAYCASTER_UTIL  
+// STL
 #include <cmath>
 #include <iostream>
 #include <stdlib.h>
@@ -8,6 +9,8 @@
 #include <filesystem>
 #include <string>
 #include <sys/stat.h>
+
+// SDL 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
 #include "SDL3/SDL_render.h"
@@ -15,5 +18,10 @@
 #include "SDL3/SDL_timer.h"
 #include "SDL3/SDL_video.h"
 #include "SDL3/SDL_keyboard.h"
+#include "SDL3/SDL_opengl.h"
+// IMGUI
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_opengl3.h"
 
 #endif

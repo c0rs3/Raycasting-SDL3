@@ -18,6 +18,11 @@ struct Map {
 	int** mData;
 	unsigned int mapWidth;
 	unsigned int mapHeight;
+	/*
+	* int** mWallData;
+	* int** mGroundData;
+	* int** mCeilingData;
+	*/
 };
 
 #endif

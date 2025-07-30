@@ -7,8 +7,8 @@
 
 #define SCREENWIDTH 1720
 #define SCREENHEIGHT 1080
-#define mapWidth 5
-#define mapHeight 5
+#define mapWidth 24
+#define mapHeight 24
 #define texWidth 64
 #define texHeight 64
 #define PIXEL_FORMAT SDL_PIXELFORMAT_RGBA8888

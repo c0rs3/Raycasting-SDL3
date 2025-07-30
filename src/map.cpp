@@ -17,9 +17,11 @@ void Map::addMap(const unsigned int& height, const unsigned int& width) {
     }
 
     printMap();
+    unsigned int inputVal;
     for (unsigned int i = 0; i < mapWidth; i++) {
         for (unsigned int k = 0; k < mapHeight; k++) {
-            std::cin >> mData[i][k];
+            std::cin >> inputVal;
+            mData[i][k] = inputVal;
             system("clear");
             printMap();
         }
