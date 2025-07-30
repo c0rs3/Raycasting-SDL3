@@ -3,6 +3,7 @@
 build
 SDL3
 SDL3/*
+*.ini
 
 # Assets
 assets/*.jpg
