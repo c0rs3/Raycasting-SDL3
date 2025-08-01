@@ -1,9 +1,9 @@
 #ifndef RAYCASTER_TEXTURE
 #define RAYCASTER_TEXTURE
 
-#include "raycasterutil.h"
+#include "raycaster.h"
 
-uint32_t makeRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 struct RGBPixel {
     uint8_t r;
     uint8_t g;

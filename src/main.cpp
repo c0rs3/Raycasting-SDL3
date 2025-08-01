@@ -1,4 +1,5 @@
 ﻿#include "renderer.h"
+#include "raycaster.h"
 
 #ifdef USE_MAP_EDITOR
 int main() {
@@ -167,9 +168,8 @@ int main() {
 
     float moveSpeed = 0.015f; // the constant value is in squares/second
     float rotSpeed = 0.15f;  // the constant value is in radians/second
+
     Map layout = Map(mapData, mapWidth, mapHeight);
-    // Map layout;
-    // layout.addMap(mapHeight, mapWidth);
     Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
     Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
     renderer.render(layout);

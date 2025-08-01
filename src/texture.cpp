@@ -1,10 +1,10 @@
 #include "texture.h"
-
+#include "raycaster.h"
 // STB Preprocessor must be kept here or multiple definitions will occur
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-uint32_t makeRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
@@ -61,7 +61,7 @@ void Texture::addTexturePNG(const std::string& filePath, unsigned int texHeight,
     for (int x = 0; x < texWidth; x++) {
         for (int y = 0; y < texHeight; y++) {
             RGBPixel texel = pixels[texWidth * y + x];
-            mData[texWidth * y + x] = makeRGBA(texel.r, texel.b, texel.g);
+            mData[texWidth * y + x] = makeRGBA8888(texel.r, texel.b, texel.g);
         }
     }
 };

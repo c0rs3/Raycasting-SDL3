@@ -1,7 +1,7 @@
 ﻿#ifndef	RAYCASTER_RENDERER
 #define RAYCASTER_RENDERER
 
-#include "raycasterutil.h"
+#include "raycaster.h"
 #include "map.h"
 #include "texture.h"
 

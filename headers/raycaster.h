@@ -1,6 +1,4 @@
-#ifndef RAYCASTER_UTIL
-#define RAYCASTER_UTIL  
-
+#pragma once
 // Flags
 // #define USE_MAP_EDITOR
 
@@ -30,8 +28,4 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
-#endif
-
-
-
 #endif

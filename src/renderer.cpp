@@ -1,5 +1,5 @@
 #include "renderer.h"
-
+#include "raycaster.h"
 Renderer::~Renderer() {
     delete[] buffer;
 }
@@ -64,7 +64,7 @@ int Renderer::render(Map& map) {
             int p = y - screenHeight / 2;
 
             // Vertical position of the camera.
-            float posZ = 0.75 * screenHeight;
+            float posZ = 0.5 * screenHeight;
 
             float rowDistance = posZ / p;
 
@@ -209,8 +209,7 @@ int Renderer::render(Map& map) {
         oldTime = time;
         time = SDL_GetTicks();
         double frameTime = (time - oldTime) / 1000.0;
-        if (int(SDL_GetTicks() / 1000) == 1)
-            std::clog << "\r" << (1.0 / frameTime) << std::flush;
+        std::clog << "\r" << (frameTime) << " ms" << std::flush;
 
         if (frameTime < 0.001f) frameTime = 0.001f;
         if (frameTime > 0.05f)  frameTime = 0.05f;

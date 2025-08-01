@@ -1,5 +1,5 @@
 #include "map.h"
-#include "raycasterutil.h"
+#include "raycaster.h"
 
 Map::~Map() {
     for (size_t i = 0; i < mapWidth; i++)
