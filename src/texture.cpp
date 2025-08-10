@@ -1,11 +1,23 @@
 #include "texture.h"
 #include "raycaster.h"
+
 // STB Preprocessor must be kept here or multiple definitions will occur
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return (r << 24) | (g << 16) | (b << 8) | a;
+}
+
+std::string stripString(std::string iString, const std::string& ToStrip) {
+    size_t indexToStrip;
+    for (size_t i = 0; i < ToStrip.size(); i++) {
+        if (ToStrip[i] != iString[i])
+            return iString;
+        if (i == ToStrip.size() - 1)
+            indexToStrip = i + 1;
+    }
+    return std::string(iString.begin() + indexToStrip, iString.end());
 }
 
 std::vector<RGBPixel> loadPNG(const std::string& filename) {
@@ -23,20 +35,11 @@ std::vector<RGBPixel> loadPNG(const std::string& filename) {
             RGBPixel& pixel = pixels[y * width + x];
 
             pixel.r = imageData[index];
-            pixel.g = imageData[index + 1];
-            pixel.b = imageData[index + 2];
+            pixel.g = imageData[index + 2]; // Do not touch this
+            pixel.b = imageData[index + 1]; // RBG instead of RGB ffs
         }
     }
-    /*
-    for (int y = 0; y < 10 && y < height; ++y) {
-        for (int x = 0; x < 10 && x < width; ++x) {
-            RGBPixel& pixel = pixels[y * width + x];
-            std::cout << "Pixel at (" << x << "," << y << ") - R: "
-            << (int)pixel.red << " G: " << (int)pixel.green << " B: " << (int)pixel.blue << std::endl;
-        }
-    }
-    */
-    stbi_image_free(imageData);
+    delete[] imageData;
     return pixels;
 }
 
@@ -50,13 +53,20 @@ std::ostream& operator<<(std::ostream& stream, RGBPixel pixel) {
 Texture::Texture() = default;
 Texture::~Texture() = default;
 
-void Texture::addTexturePNG(const std::string& filePath, unsigned int texHeight, unsigned int texWidth) {
-    if (!std::filesystem::exists(filePath)){
+uint32_t Texture::operator[](size_t index) {
+    return mData[index];
+}
+
+void Texture::addTexturePNG(const std::string& filePath, unsigned int texHeight,
+    unsigned int texWidth) {
+    textureNameList.push_back(stripString(filePath, TEXTURE_ASSET_PATH));
+    if (!std::filesystem::exists(filePath)) {
         throw std::runtime_error("Invalid path! " + filePath);
     }
     std::vector<RGBPixel> pixels;
     pixels.resize(texHeight * texWidth);
     mData.resize(texHeight * texWidth);
+
     pixels = loadPNG(filePath);
     for (int x = 0; x < texWidth; x++) {
         for (int y = 0; y < texHeight; y++) {
@@ -65,3 +75,7 @@ void Texture::addTexturePNG(const std::string& filePath, unsigned int texHeight,
         }
     }
 };
+
+void Texture::clearTextures() {
+    mData.clear();
+}
