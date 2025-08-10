@@ -13,7 +13,6 @@
 
 #define texWidth 64
 #define texHeight 64
-#define TEXTURE_ASSET_PATH "assets/textures"
 #define PIXEL_FORMAT SDL_PIXELFORMAT_RGBA8888
 
 class Camera {
@@ -21,7 +20,8 @@ public:
 	Camera(double posX = 0, double posY = 0, double dirX = 0,
 		double dirY = 0, double planeX = 0, double planeY = 0.66f, double moveSpeed = 0.1f, double rotSpeed = 0.1f)
 		: posX(posX), posY(posY), dirX(dirX),
-		dirY(dirY), planeX(planeX), planeY(planeY), moveSpeed(moveSpeed), rotSpeed(rotSpeed) {};
+		dirY(dirY), planeX(planeX), planeY(planeY), 
+		moveSpeed(moveSpeed), rotSpeed(rotSpeed) {};
 	~Camera() {};
 
 	double posX, posY;
