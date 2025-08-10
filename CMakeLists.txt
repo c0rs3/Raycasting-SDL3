@@ -2,14 +2,9 @@
 project(Raycaster-SDL LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_BUILD_PARALLEL_LEVEL 12)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-# if(NOT CMAKE_BUILD_TYPE)
-#   set(CMAKE_BUILD_TYPE Release)
-#   else()
-#   set(CMAKE_BUILD_TYPE Debug)
-# endif()
+set(CMAKE_CXX_EXTENSIONS ON)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -40,16 +35,33 @@ file(GLOB GLAD_SRC
     "${GLAD_ROOT}/src/*.c"
 )
 
-add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES} ${IMGUI_SRC})
+set(DONTIMGUI OFF)
+if(NOT DONTIMGUI) 
+    message("Not using IMGUI ffs")
+    add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES})
+    
+    target_include_directories(Raycaster-SDL PRIVATE
+    "${SDL3_ROOT}/include"
+    "${CMAKE_SOURCE_DIR}/headers"
+    )
+    
+    target_link_directories(Raycaster-SDL PRIVATE "${SDL3_ROOT}/lib")
+    target_link_libraries(Raycaster-SDL PRIVATE SDL3)
+    else()
+    message("Using IMGUI ffs")
+    add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES} ${IMGUI_SRC} ${GLAD_SRC})
 
-target_include_directories(Raycaster-SDL PRIVATE
+    target_include_directories(Raycaster-SDL PRIVATE
     "${SDL3_ROOT}/include"
     "${CMAKE_SOURCE_DIR}/headers"
     "${IMGUI_ROOT}"
     "${IMGUI_ROOT}/backends"
     "${GLAD_ROOT}/include"
-)
+    )
 
-target_link_directories(Raycaster-SDL PRIVATE "${SDL3_ROOT}/lib")
-target_link_libraries(Raycaster-SDL PRIVATE SDL3 OpenGL32)
+    target_link_directories(Raycaster-SDL PRIVATE "${SDL3_ROOT}/lib")
+    target_link_libraries(Raycaster-SDL PRIVATE SDL3 OpenGL32)
+
+endif()
+unset(DONTIMGUI)
 
