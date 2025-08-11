@@ -9,7 +9,8 @@
 - [x] Fundamentals, Base Engine
 - [x] Textures
 - [x] Floor & Ceiling rendering
+- [x] Color Correction
 - [ ] Map editor
   - [x] Terminal Editor
-  - [ ] ImGui Editor
+  - [ ] ~~ImGui Editor~~ SDL3 Editor (Create map through the render pipeline used for the game)
 - [ ] Advanced graphics -> lighting, shadows, fog
