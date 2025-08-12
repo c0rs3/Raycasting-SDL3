@@ -16,52 +16,29 @@ add_compile_options(-Wall -Wextra -pedantic)
 add_compile_options(-Wno-bool-compare)
 add_compile_options(-Wno-sign-compare)
 
+message("Compiler options setup...")
 # SDL3
 set(SDL3_ROOT "${CMAKE_SOURCE_DIR}/dependencies/SDL3")
-
-# IMGUI
-set(IMGUI_ROOT "${CMAKE_SOURCE_DIR}/dependencies/imgui")
-set(GLAD_ROOT "${CMAKE_SOURCE_DIR}/dependencies/glad")
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/headers/*.h")
 
 file(GLOB IMGUI_SRC
-    "${IMGUI_ROOT}/*.cpp"
-    "${IMGUI_ROOT}/backends/*.cpp"
-)
+"${IMGUI_ROOT}/*.cpp"
+"${IMGUI_ROOT}/backends/*.cpp")
 
 file(GLOB GLAD_SRC
-    "${GLAD_ROOT}/src/*.c"
-)
+"${GLAD_ROOT}/src/*.c")
 
-set(DONTIMGUI OFF)
-if(NOT DONTIMGUI) 
-    message("Not using IMGUI ffs")
-    add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES})
-    
-    target_include_directories(Raycaster-SDL PRIVATE
-    "${SDL3_ROOT}/include"
-    "${CMAKE_SOURCE_DIR}/headers"
-    )
-    
-    target_link_directories(Raycaster-SDL PRIVATE "${SDL3_ROOT}/lib")
-    target_link_libraries(Raycaster-SDL PRIVATE SDL3)
-    else()
-    message("Using IMGUI ffs")
-    add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES} ${IMGUI_SRC} ${GLAD_SRC})
+message("GLOB done.")
 
-    target_include_directories(Raycaster-SDL PRIVATE
-    "${SDL3_ROOT}/include"
-    "${CMAKE_SOURCE_DIR}/headers"
-    "${IMGUI_ROOT}"
-    "${IMGUI_ROOT}/backends"
-    "${GLAD_ROOT}/include"
-    )
+add_executable(Raycaster-SDL ${SRC_FILES} ${HEADER_FILES})
 
-    target_link_directories(Raycaster-SDL PRIVATE "${SDL3_ROOT}/lib")
-    target_link_libraries(Raycaster-SDL PRIVATE SDL3 OpenGL32)
+target_include_directories(Raycaster-SDL PRIVATE
+"${SDL3_ROOT}/include"
+"${CMAKE_SOURCE_DIR}/headers")
 
-endif()
-unset(DONTIMGUI)
+target_link_directories(Raycaster-SDL PRIVATE "${SDL3_ROOT}/lib")
+target_link_libraries(Raycaster-SDL PRIVATE SDL3)
+
 
