@@ -34,7 +34,7 @@ private:
 class Renderer {
 public:
 	Renderer(const Camera& camera, unsigned int screenWidth, unsigned int screenHeight)
-		:mCamera(camera), mWindow_context(nullptr), mRender_context(nullptr), screenWidth(screenWidth), screenHeight(screenHeight) {}
+		:mCamera(camera), mWindowContext(nullptr), mRenderContext(nullptr), screenWidth(screenWidth), screenHeight(screenHeight) {}
 
 	~Renderer();
 
@@ -42,9 +42,9 @@ public:
 
 private:
 	Camera mCamera;
-	SDL_Window* mWindow_context;
-	SDL_Renderer* mRender_context;
+	SDL_Window* mWindowContext;
+	SDL_Renderer* mRenderContext;
 	unsigned int screenWidth, screenHeight;
-	uint32_t* buffer;
+	uint32_t* mRenderBuffer;
 };
 #endif

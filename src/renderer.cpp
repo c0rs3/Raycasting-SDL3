@@ -2,12 +2,12 @@
 #include "raycaster.h"
 
 Renderer::~Renderer() {
-    delete[] buffer;
+    delete[] mRenderBuffer;
 }
 
 int Renderer::render(Map& map) {
-    buffer = new uint32_t[screenHeight * screenWidth];
-    memset(buffer, 0, screenWidth * screenHeight * sizeof(uint32_t));
+    mRenderBuffer = new uint32_t[screenHeight * screenWidth];
+    memset(mRenderBuffer, 0, screenWidth * screenHeight * sizeof(uint32_t));
     std::vector<Texture> textureList = std::vector<Texture>();
     textureList.resize(8);
 
@@ -36,14 +36,14 @@ int Renderer::render(Map& map) {
     }
 
     if (!SDL_CreateWindowAndRenderer("Ray-casting", screenWidth,
-        screenHeight, 0, &mWindow_context, &mRender_context)) {
+        screenHeight, 0, &mWindowContext, &mRenderContext)) {
         std::clog << "Failed to init Window and/or Renderer"
             << SDL_GetError() << std::endl;
         return 1;
     }
 
-    SDL_Texture* render_texture = SDL_CreateTexture(
-        mRender_context, PIXEL_FORMAT, SDL_TEXTUREACCESS_STREAMING,
+    SDL_Texture* renderTexture = SDL_CreateTexture(
+        mRenderContext, PIXEL_FORMAT, SDL_TEXTUREACCESS_STREAMING,
         screenWidth, screenHeight);
 
     bool quit = false;
@@ -90,11 +90,11 @@ int Renderer::render(Map& map) {
 
                 // floor
                 color = textureList[floorTexture][texHeight * texY + texX];
-                buffer[y * screenWidth + x] = color;
+                mRenderBuffer[y * screenWidth + x] = color;
 
                 //ceiling
                 color = textureList[ceilingTexture][texHeight * texY + texX];
-                buffer[(screenHeight * screenWidth - (y + 1) * screenWidth) + x] = color;
+                mRenderBuffer[(screenHeight * screenWidth - (y + 1) * screenWidth) + x] = color;
             }
         }
 
@@ -194,21 +194,21 @@ int Renderer::render(Map& map) {
                     color = textureList[texNum].mData[texHeight * texY + texX];
                 }
                 if (side == 0) {
-                    buffer[y * screenWidth + x] = color;
+                    mRenderBuffer[y * screenWidth + x] = color;
                 }
                 else { // TODO Implement simple alpha adjustments according to the side
-                    buffer[y * screenWidth + x] = color;
+                    mRenderBuffer[y * screenWidth + x] = color;
                 }
             }
         }
 
-        SDL_RenderClear(mRender_context);
-        if (SDL_UpdateTexture(render_texture, nullptr, buffer,
+        SDL_RenderClear(mRenderContext);
+        if (SDL_UpdateTexture(renderTexture, nullptr, mRenderBuffer,
             screenWidth * sizeof(uint32_t)) < 0) {
             std::clog << "UpdateTexture failed: " << SDL_GetError() << std::endl;
         }
 
-        if (SDL_RenderTexture(mRender_context, render_texture, nullptr, nullptr) < 0) {
+        if (SDL_RenderTexture(mRenderContext, renderTexture, nullptr, nullptr) < 0) {
             std::clog << "RenderTexture failed: " << SDL_GetError() << std::endl;
         }
 
@@ -227,11 +227,8 @@ int Renderer::render(Map& map) {
         neg_cRotSpeed = cos(-mCamera.rotSpeed * frameTime * 5);
 
         // User requests quit
-        if (event.type == SDL_EVENT_QUIT || event.key.scancode == SDL_SCANCODE_ESCAPE) {
+        if (keyState[SDL_SCANCODE_ESCAPE] || keyState[SDL_SCANCODE_BACKSPACE])
             quit = true;
-            SDL_DestroyWindow(mWindow_context);
-            SDL_DestroyRenderer(mRender_context);
-        }
 
         if (keyState[SDL_SCANCODE_UP]) {
             if (!map.mData[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed)]
@@ -269,9 +266,9 @@ int Renderer::render(Map& map) {
             mCamera.planeY = oldPlaneX * sRotSpeed + mCamera.planeY * cRotSpeed;
 
         }
-        SDL_RenderPresent(mRender_context);
+        SDL_RenderPresent(mRenderContext);
 
     }
-    SDL_DestroyTexture(render_texture);
+    SDL_DestroyTexture(renderTexture);
     return 0;
 }
