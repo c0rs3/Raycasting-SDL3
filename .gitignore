@@ -8,3 +8,6 @@ SDL3/*
 # Assets
 assets/*.jpg
 assets/wolftextures.png
+
+# Dependencies
+dependencies
