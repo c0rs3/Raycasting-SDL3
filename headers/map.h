@@ -14,6 +14,7 @@ struct Map {
 
 	~Map();
 	void addMap(const unsigned int& height, const unsigned int& width);
+	int UI(unsigned int screenWidth, unsigned int screenHeight);
 	void printMap();
 	int** mData;
 	unsigned int mapWidth;
