@@ -1,27 +1,23 @@
 #include "map.h"
 #include "raycaster.h"
 
+extern uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
 Map::~Map() {
-    for (size_t i = 0; i < mapWidth; i++)
-        delete[] mData[i];
     delete[] mData;
 }
 
 void Map::addMap(const unsigned int& height, const unsigned int& width) {
-    mapWidth = width;
-    mapHeight = height;
-    if (mData == nullptr) {
-        mData = new int* [mapWidth];
-        for (unsigned int i = 0; i < mapWidth; ++i)
-            mData[i] = new int[mapHeight];
-    }
+    mapWidth = width; mapHeight = height;
+    if (mData == nullptr)
+        mData = new int[mapWidth * mapHeight];
 
     printMap();
     unsigned int inputVal;
-    for (unsigned int i = 0; i < mapWidth; i++) {
-        for (unsigned int k = 0; k < mapHeight; k++) {
+    for (unsigned int w = 0; w < mapWidth; w++) {
+        for (unsigned int h = 0; h < mapHeight; h++) {
             std::cin >> inputVal;
-            mData[i][k] = inputVal;
+            mData[w * mapWidth + h] = inputVal;
             system("clear");
             printMap();
         }
@@ -29,12 +25,12 @@ void Map::addMap(const unsigned int& height, const unsigned int& width) {
 }
 
 void Map::printMap() {
-    for (unsigned int i = 0; i < mapWidth; i++) {
+    for (unsigned int w = 0; w < mapWidth; w++) {
         std::cout << "{";
-        for (unsigned int k = 0; k < mapHeight; k++) {
-            std::cout << mData[i][k] << ((k == mapHeight - 1) ? "" : ", ");
+        for (unsigned int h = 0; h < mapHeight; h++) {
+            std::cout << mData[w * mapWidth + h] << ((h == mapHeight - 1) ? "" : ", ");
         }
-        std::cout << ((i == mapHeight - 1) ? "}" : "},") << std::endl;
+        std::cout << ((w == mapHeight - 1) ? "}" : "},") << std::endl;
     }
 }
 
@@ -44,7 +40,6 @@ int Map::UI(unsigned int screenWidth, unsigned int screenHeight) {
     SDL_Renderer* RenderContext;
 
     uint32_t* renderBuffer = new uint32_t[screenHeight * screenWidth];
-    memset(renderBuffer, 0, screenHeight * screenWidth);
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::clog << "Failed to init SDL video: "
@@ -69,10 +64,23 @@ int Map::UI(unsigned int screenWidth, unsigned int screenHeight) {
         SDL_PollEvent(&event);
         const bool* keyState = SDL_GetKeyboardState(nullptr);
         SDL_RenderClear(RenderContext);
-        
-        for (size_t i = 0; i < mapHeight; ++i) {
-            for (size_t k = 0; k < mapWidth; ++k) {
-                // 
+
+        unsigned int heightStep = screenHeight / mapHeight;
+        unsigned int widthStep = screenWidth / mapWidth;
+        // unsigned int stepGlobal = (heightStep > widthStep) ? widthStep : heightStep;
+
+        for (size_t w = 0; w < screenWidth; w++) {
+            for (size_t h = 0; h < screenHeight; h++) {
+                unsigned int mapX = static_cast<unsigned int>(w / widthStep);
+                unsigned int mapY = static_cast<unsigned int>(h / heightStep);
+                if (mData[(mapX * w / widthStep) + (mapY * h / heightStep)]) {
+                    /*
+                    std::clog << "Map" << mData[(mapX * w / widthStep) + mapY] 
+                    << " w" << w
+                    << " h" << h << std::endl;
+                    */
+                    renderBuffer[screenWidth * h + w] = makeRGBA8888(0, 0, 255, 255);
+                }
             }
         }
 
@@ -85,7 +93,7 @@ int Map::UI(unsigned int screenWidth, unsigned int screenHeight) {
             std::clog << "RenderTexture failed: " << SDL_GetError() << std::endl;
         }
 
-        if (event.type == SDL_EVENT_QUIT || event.key.scancode == SDL_SCANCODE_ESCAPE) {
+        if (keyState[SDL_SCANCODE_ESCAPE] || keyState[SDL_SCANCODE_BACKSPACE]) {
             quit = true;
             SDL_DestroyWindow(WindowContext);
             SDL_DestroyRenderer(RenderContext);

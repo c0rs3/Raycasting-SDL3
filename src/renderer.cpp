@@ -153,7 +153,8 @@ int Renderer::render(Map& map) {
                     mapY += stepY;
                     side = 1;
                 }
-                if (map.mData[mapX][mapY] > 0) hit = 1;
+
+                if (map.mData[mapX * mapWidth + mapY] > 0) hit = 1;
             }
 
             // Calculate distance projected on mCamera direction
@@ -168,7 +169,7 @@ int Renderer::render(Map& map) {
             int drawEnd = lineHeight / 2 + h / 2;
             if (drawEnd >= h) drawEnd = h - 1;
 
-            int texNum = map.mData[mapX][mapY] - 1;
+            int texNum = map.mData[mapX * mapWidth + mapY] - 1;
 
             double wallX;
             if (side == 0) wallX = mCamera.posY + perpWallDist * rayDirY;
@@ -231,20 +232,17 @@ int Renderer::render(Map& map) {
             quit = true;
 
         if (keyState[SDL_SCANCODE_UP]) {
-            if (!map.mData[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed)]
-                [int(mCamera.posY)]) mCamera.posX \
-                += mCamera.dirX * mCamera.moveSpeed;
-            if (!map.mData[int(mCamera.posX)][int(mCamera.posY + mCamera.dirY * mCamera.moveSpeed)]) mCamera.posY \
-                += mCamera.dirY * mCamera.moveSpeed;
+            if (!map.mData[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)])
+                mCamera.posX += mCamera.dirX * mCamera.moveSpeed;
+            if (!map.mData[int(mCamera.posX) * mapWidth + int(mCamera.posY + mCamera.dirY * mCamera.moveSpeed)])
+                mCamera.posY += mCamera.dirY * mCamera.moveSpeed;
         }
 
         if (keyState[SDL_SCANCODE_DOWN]) {
-            if (!map.mData[int(mCamera.posX - mCamera.dirX * mCamera.moveSpeed)]
-                [int(mCamera.posY)]) mCamera.posX \
-                -= mCamera.dirX * mCamera.moveSpeed;
-            if (!map.mData[int(mCamera.posX)]
-                [int(mCamera.posY - mCamera.dirY * mCamera.moveSpeed)]) mCamera.posY \
-                -= mCamera.dirY * mCamera.moveSpeed;
+            if (!map.mData[int(mCamera.posX - mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)]) 
+                mCamera.posX -= mCamera.dirX * mCamera.moveSpeed;
+            if (!map.mData[int(mCamera.posX) * mapWidth + int(mCamera.posY - mCamera.dirY * mCamera.moveSpeed)]) 
+                mCamera.posY -= mCamera.dirY * mCamera.moveSpeed;
         }
 
         if (keyState[SDL_SCANCODE_RIGHT]) {

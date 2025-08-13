@@ -30,12 +30,10 @@ int worldMap[mapWidth][mapHeight] =
 };
 
 int main() {
-    int** mapData = new int* [mapWidth];
-    for (unsigned int i = 0; i < mapWidth; ++i)
-        mapData[i] = new int[mapHeight];
+    int* mapData = new int[mapWidth * mapHeight];
     for (unsigned int i = 0; i < mapWidth; i++) {
         for (unsigned int k = 0; k < mapHeight; k++) {
-            mapData[i][k] = worldMap[i][k];
+            mapData[i * mapWidth + k] = worldMap[i][k];
         }
     }
 
@@ -49,6 +47,6 @@ int main() {
     Map layout = Map(mapData, mapWidth, mapHeight);
     Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
     Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
-    layout.UI(200, 200);
+    layout.UI(SCREENWIDTH, SCREENHEIGHT);
     // return renderer.render(layout);
 }
