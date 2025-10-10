@@ -6,9 +6,6 @@ set(CMAKE_BUILD_PARALLEL_LEVEL 12)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
 # Extra warnings
 add_compile_options(-Wall -Wextra -pedantic)
 
@@ -22,13 +19,6 @@ set(SDL3_ROOT "${CMAKE_SOURCE_DIR}/dependencies/SDL3")
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/headers/*.h")
-
-file(GLOB IMGUI_SRC
-"${IMGUI_ROOT}/*.cpp"
-"${IMGUI_ROOT}/backends/*.cpp")
-
-file(GLOB GLAD_SRC
-"${GLAD_ROOT}/src/*.c")
 
 message("GLOB done.")
 
