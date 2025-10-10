@@ -35,7 +35,6 @@ void Map::printMap() {
 }
 
 int Map::UI(unsigned int screenWidth, unsigned int screenHeight) {
-    this->printMap();
     SDL_Window* WindowContext;
     SDL_Renderer* RenderContext;
 
@@ -47,7 +46,7 @@ int Map::UI(unsigned int screenWidth, unsigned int screenHeight) {
         return 1;
     }
 
-    if (!SDL_CreateWindowAndRenderer("Ray-casting", screenWidth,
+    if (!SDL_CreateWindowAndRenderer("Map editor", screenWidth,
         screenHeight, 0, &WindowContext, &RenderContext)) {
         std::clog << "Failed to init Window and/or Renderer"
             << SDL_GetError() << std::endl;
@@ -67,19 +66,52 @@ int Map::UI(unsigned int screenWidth, unsigned int screenHeight) {
 
         unsigned int heightStep = screenHeight / mapHeight;
         unsigned int widthStep = screenWidth / mapWidth;
-        // unsigned int stepGlobal = (heightStep > widthStep) ? widthStep : heightStep;
-
-        for (size_t w = 0; w < screenWidth; w++) {
-            for (size_t h = 0; h < screenHeight; h++) {
-                unsigned int mapX = static_cast<unsigned int>(w / widthStep);
-                unsigned int mapY = static_cast<unsigned int>(h / heightStep);
-                if (mData[(mapX * w / widthStep) + (mapY * h / heightStep)]) {
-                    /*
-                    std::clog << "Map" << mData[(mapX * w / widthStep) + mapY] 
-                    << " w" << w
-                    << " h" << h << std::endl;
-                    */
-                    renderBuffer[screenWidth * h + w] = makeRGBA8888(0, 0, 255, 255);
+        for (size_t h = 0; h < screenHeight; h++) {
+            for (size_t w = 0; w < screenWidth; w++) {
+                uint32_t mapSection = (h / heightStep) * mapWidth + (w / widthStep);
+                if (mData[mapSection]) {
+                    switch (mData[mapSection]) {
+                    case 1:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(0, 0, 255, 255);
+                        }
+                        break;
+                    case 2:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(255, 0, 255, 255);
+                        }
+                        break;
+                    case 3:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(127, 127, 255, 255);
+                        }
+                        break;
+                    case 4:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(0, 255, 0, 255);
+                        }
+                        break;
+                    case 5:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(127, 0, 255, 255);
+                        }
+                        break;
+                    case 6:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(255, 127, 255, 255);
+                        }
+                        break;
+                    case 7:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(255, 0, 127, 255);
+                        }
+                        break;
+                    default:
+                        for (size_t i = 0; i < 5; i++) {
+                            renderBuffer[screenWidth * h + w + i] = makeRGBA8888(255, 255, 255, 255);
+                        }
+                        break;
+                    }
                 }
             }
         }
