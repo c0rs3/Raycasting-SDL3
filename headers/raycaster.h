@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <string>
 #include <sys/stat.h>
+#include <thread>
 
 // SDL 
 #include <SDL3/SDL.h>

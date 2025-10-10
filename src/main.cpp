@@ -29,6 +29,8 @@ int worldMap[mapWidth][mapHeight] =
   {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
 };
 
+std::vector<std::thread>threads;
+
 int main() {
     int* mapData = new int[mapWidth * mapHeight];
     for (unsigned int i = 0; i < mapWidth; i++) {
@@ -41,12 +43,17 @@ int main() {
     float dirX = -1, dirY = 0;     // initial direction vector
     float planeX = 0, planeY = 1;  // camera plane
 
-    float moveSpeed = 0.015f; // the constant value is in squares/second
+    float moveSpeed = 0.050f; // the constant value is in squares/second
     float rotSpeed = 0.15f;   // the constant value is in radians/second
 
     Map layout = Map(mapData, mapWidth, mapHeight);
     Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
     Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
-    layout.UI(SCREENWIDTH, SCREENHEIGHT);
+    threads.push_back(std::thread([&layout]() {layout.UI(600, 600);}));
+    threads.push_back(std::thread([&renderer, &layout]() {renderer.render(layout);}));
+    for (size_t i = 0; i < threads.size(); i++) {
+        threads[i].join();
+    }
+    // layout.UI(600, 600);
     // return renderer.render(layout);
 }
