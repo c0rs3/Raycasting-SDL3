@@ -32,28 +32,22 @@ int worldMap[mapWidth][mapHeight] =
 std::vector<std::thread>threads;
 
 int main() {
-    int* mapData = new int[mapWidth * mapHeight];
-    for (unsigned int i = 0; i < mapWidth; i++) {
-        for (unsigned int k = 0; k < mapHeight; k++) {
-            mapData[i * mapWidth + k] = worldMap[i][k];
-        }
-    }
-
     float posX = 2, posY = 8;      // start position
     float dirX = -1, dirY = 0;     // initial direction vector
     float planeX = 0, planeY = 1;  // camera plane
 
     float moveSpeed = 0.050f; // the constant value is in squares/second
-    float rotSpeed = 0.15f;   // the constant value is in radians/second
+    float rotSpeed = 0.50f;   // the constant value is in radians/second
 
-    Map layout = Map(mapData, mapWidth, mapHeight);
+    Map layout = Map((int*)&worldMap, mapWidth, mapHeight);
     Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
     Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
-    threads.push_back(std::thread([&layout]() {layout.UI(600, 600);}));
-    threads.push_back(std::thread([&renderer, &layout]() {renderer.render(layout);}));
-    for (size_t i = 0; i < threads.size(); i++) {
-        threads[i].join();
-    }
-    // layout.UI(600, 600);
-    // return renderer.render(layout);
+    // threads.push_back(std::thread([&layout]() {layout.mapEditorUI(600, 600);}));
+    // threads.push_back(std::thread([&renderer, &layout]() {renderer.render(layout);}));
+    // for (size_t i = 0; i < threads.size(); i++) {
+    //     threads[i].join();
+    // }
+    layout.mapEditorUI(600, 600);
+    renderer.render(layout);
+    return 0;
 }

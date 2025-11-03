@@ -1,4 +1,5 @@
-﻿#ifndef	RAYCASTER_RENDERER
+﻿#pragma once
+#ifndef	RAYCASTER_RENDERER
 #define RAYCASTER_RENDERER
 
 #include "raycaster.h"
@@ -36,7 +37,7 @@ public:
 	Renderer(const Camera& camera, unsigned int screenWidth, unsigned int screenHeight)
 		:mCamera(camera), mWindowContext(nullptr), mRenderContext(nullptr), screenWidth(screenWidth), screenHeight(screenHeight) {}
 
-	~Renderer();
+	~Renderer() = default;
 
 	int render(Map& map);
 
@@ -45,6 +46,5 @@ private:
 	SDL_Window* mWindowContext;
 	SDL_Renderer* mRenderContext;
 	unsigned int screenWidth, screenHeight;
-	uint32_t* mRenderBuffer;
 };
 #endif

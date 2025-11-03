@@ -1,19 +1,14 @@
 #include "renderer.h"
 #include "raycaster.h"
 
-Renderer::~Renderer() {
-    delete[] mRenderBuffer;
-}
-
 int Renderer::render(Map& map) {
-    mRenderBuffer = new uint32_t[screenHeight * screenWidth];
-    memset(mRenderBuffer, 0, screenWidth * screenHeight * sizeof(uint32_t));
+    std::unique_ptr<uint32_t>mRenderBuffer(new uint32_t[screenHeight * screenWidth]);
+    memset(mRenderBuffer.get(), 0, screenWidth * screenHeight * sizeof(uint32_t));
+
     std::vector<Texture> textureList = std::vector<Texture>();
     textureList.resize(8);
-
-    unsigned int textureIndex = 0;
     std::clog << "Working dir: " << std::filesystem::current_path() << '\n';
-    for (const auto& entry : std::filesystem::directory_iterator(TEXTURE_ASSET_PATH)) {
+    for (unsigned int textureIndex = 0; const auto& entry : std::filesystem::directory_iterator(TEXTURE_ASSET_PATH)) {
         std::filesystem::path outfilename = entry.path();
         textureList[textureIndex].addTexturePNG(outfilename.string(), texHeight, texWidth);
 
@@ -35,9 +30,9 @@ int Renderer::render(Map& map) {
         return 1;
     }
 
-    if (!SDL_CreateWindowAndRenderer("Ray-casting", screenWidth,
+    if (!SDL_CreateWindowAndRenderer("Game", screenWidth,
         screenHeight, 0, &mWindowContext, &mRenderContext)) {
-        std::clog << "Failed to init Window and/or Renderer"
+        std::clog << "Failed to init Window and/or Renderer "
             << SDL_GetError() << std::endl;
         return 1;
     }
@@ -90,11 +85,11 @@ int Renderer::render(Map& map) {
 
                 // floor
                 color = textureList[floorTexture][texHeight * texY + texX];
-                mRenderBuffer[y * screenWidth + x] = color;
+                mRenderBuffer.get()[y * screenWidth + x] = color;
 
                 //ceiling
                 color = textureList[ceilingTexture][texHeight * texY + texX];
-                mRenderBuffer[(screenHeight * screenWidth - (y + 1) * screenWidth) + x] = color;
+                mRenderBuffer.get()[(screenHeight * screenWidth - (y + 1) * screenWidth) + x] = color;
             }
         }
 
@@ -154,7 +149,7 @@ int Renderer::render(Map& map) {
                     side = 1;
                 }
 
-                if (map.mData[mapX * mapWidth + mapY] > 0) hit = 1;
+                if (map.mData.get()[mapX * mapWidth + mapY] > 0) hit = 1;
             }
 
             // Calculate distance projected on mCamera direction
@@ -169,7 +164,7 @@ int Renderer::render(Map& map) {
             int drawEnd = lineHeight / 2 + h / 2;
             if (drawEnd >= h) drawEnd = h - 1;
 
-            int texNum = map.mData[mapX * mapWidth + mapY] - 1;
+            int texNum = map.mData.get()[mapX * mapWidth + mapY] - 1;
 
             double wallX;
             if (side == 0) wallX = mCamera.posY + perpWallDist * rayDirY;
@@ -195,16 +190,16 @@ int Renderer::render(Map& map) {
                     color = textureList[texNum].mData[texHeight * texY + texX];
                 }
                 if (side == 0) {
-                    mRenderBuffer[y * screenWidth + x] = color;
+                    mRenderBuffer.get()[y * screenWidth + x] = color;
                 }
                 else { // TODO Implement simple alpha adjustments according to the side
-                    mRenderBuffer[y * screenWidth + x] = color;
+                    mRenderBuffer.get()[y * screenWidth + x] = color;
                 }
             }
         }
 
         SDL_RenderClear(mRenderContext);
-        if (SDL_UpdateTexture(renderTexture, nullptr, mRenderBuffer,
+        if (SDL_UpdateTexture(renderTexture, nullptr, mRenderBuffer.get(),
             screenWidth * sizeof(uint32_t)) < 0) {
             std::clog << "UpdateTexture failed: " << SDL_GetError() << std::endl;
         }
@@ -228,20 +223,20 @@ int Renderer::render(Map& map) {
         neg_cRotSpeed = cos(-mCamera.rotSpeed * frameTime * 5);
 
         // User requests quit
-        if (keyState[SDL_SCANCODE_ESCAPE] || keyState[SDL_SCANCODE_BACKSPACE])
+        if (keyState[SDL_SCANCODE_ESCAPE] || keyState[SDL_SCANCODE_BACKSPACE] || event.type == SDL_EVENT_QUIT)
             quit = true;
 
         if (keyState[SDL_SCANCODE_UP]) {
-            if (!map.mData[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)])
+            if (!map.mData.get()[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)])
                 mCamera.posX += mCamera.dirX * mCamera.moveSpeed;
-            if (!map.mData[int(mCamera.posX) * mapWidth + int(mCamera.posY + mCamera.dirY * mCamera.moveSpeed)])
+            if (!map.mData.get()[int(mCamera.posX) * mapWidth + int(mCamera.posY + mCamera.dirY * mCamera.moveSpeed)])
                 mCamera.posY += mCamera.dirY * mCamera.moveSpeed;
         }
 
         if (keyState[SDL_SCANCODE_DOWN]) {
-            if (!map.mData[int(mCamera.posX - mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)]) 
+            if (!map.mData.get()[int(mCamera.posX - mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)])
                 mCamera.posX -= mCamera.dirX * mCamera.moveSpeed;
-            if (!map.mData[int(mCamera.posX) * mapWidth + int(mCamera.posY - mCamera.dirY * mCamera.moveSpeed)]) 
+            if (!map.mData.get()[int(mCamera.posX) * mapWidth + int(mCamera.posY - mCamera.dirY * mCamera.moveSpeed)])
                 mCamera.posY -= mCamera.dirY * mCamera.moveSpeed;
         }
 

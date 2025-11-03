@@ -23,8 +23,8 @@ std::string stripString(std::string iString, const std::string& ToStrip) {
 std::vector<RGBPixel> loadPNG(const std::string& filename) {
     int width, height, channels;
 
-    uint8_t* imageData = stbi_load(filename.c_str(), &width, &height, &channels, 3);
-    if (imageData == nullptr) {
+    std::unique_ptr<uint8_t> imageData(stbi_load(filename.c_str(), &width, &height, &channels, 3));
+    if (imageData.get() == nullptr) {
         std::cerr << "Error loading image: " << filename << std::endl;
         return std::vector<RGBPixel>();
     }
@@ -34,12 +34,11 @@ std::vector<RGBPixel> loadPNG(const std::string& filename) {
             int index = (y * width + x) * 3;
             RGBPixel& pixel = pixels[y * width + x];
 
-            pixel.r = imageData[index];
-            pixel.g = imageData[index + 2]; // Do not touch this
-            pixel.b = imageData[index + 1]; // RBG instead of RGB ffs
+            pixel.r = imageData.get()[index];
+            pixel.g = imageData.get()[index + 2]; // Do not touch this
+            pixel.b = imageData.get()[index + 1]; // RBG instead of RGB ffs
         }
     }
-    delete[] imageData;
     return pixels;
 }
 

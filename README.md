@@ -1,6 +1,6 @@
 # Wolfenstein Raycaster *(via SDL3)*
 
-- A simple still-in-progress ray-casting engine made using SDL3
+- A simple in-progress ray-casting engine made using SDL3
 
 ![graph smh](README.png "Title")
 
@@ -12,5 +12,8 @@
 - [x] Color Correction
 - [ ] Map editor
   - [x] Terminal Editor
-  - [ ] ~~ImGui Editor~~ SDL3 Editor (Create map through the render pipeline used for the game)
+  - [x] Convert map mData to 1D array
+  - [x] Create map through the render pipeline used for the game
+  - [x] Add the ability to scroll through segments and change
+  - [ ] Abstractions and shit 
 - [ ] Advanced graphics -> lighting, shadows, fog

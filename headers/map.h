@@ -1,8 +1,12 @@
+#pragma once
 #ifndef RAYCASTER_MAP
 #define RAYCASTER_MAP
 
+#include "raycaster.h"
+
 struct Map {
 	Map() = default;
+	~Map() = default;
 
 	/*
 	* @brief Takes the ownership of the map data pointer.
@@ -12,18 +16,13 @@ struct Map {
 	Map(int* map, unsigned int mapWidth, unsigned int mapHeight)
 		: mData(map), mapWidth(mapWidth), mapHeight(mapHeight) {}
 
-	~Map();
-	void addMap(const unsigned int& height, const unsigned int& width);
-	int UI(unsigned int screenWidth, unsigned int screenHeight);
+	void mapEditorTerminal(const unsigned int& height, const unsigned int& width);
+	int mapEditorUI(unsigned int screenWidth, unsigned int screenHeight);
 	void printMap();
-	int* mData;
+
+	std::shared_ptr<int> mData;
 	unsigned int mapWidth;
 	unsigned int mapHeight;
-	/*
-	* int** mWallData;
-	* int** mGroundData;
-	* int** mCeilingData;
-	*/
 };
 
 #endif
