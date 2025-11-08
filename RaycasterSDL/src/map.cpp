@@ -1,5 +1,5 @@
-#include "map.h"
-#include "raycaster.h"
+#include <Raycaster.hpp>
+#include <Raycaster/Map.hpp>
 
 extern uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
@@ -16,7 +16,7 @@ void Map::printMap() {
     std::cout << std::endl;
 }
 
-void Map::mapEditorTerminal(const uint32_t& height, const uint32_t& width) {
+void Map::EditorCLI(const uint32_t& height, const uint32_t& width) {
     mapWidth = width; mapHeight = height;
     printMap();
     uint32_t inputVal;
@@ -30,7 +30,7 @@ void Map::mapEditorTerminal(const uint32_t& height, const uint32_t& width) {
     }
 }
 
-int Map::mapEditorUI(uint32_t screenWidth, uint32_t screenHeight) {
+int Map::EditorWindow(uint32_t screenWidth, uint32_t screenHeight) {
     SDL_Window* WindowContext;
     SDL_Renderer* RenderContext;
 
@@ -47,6 +47,7 @@ int Map::mapEditorUI(uint32_t screenWidth, uint32_t screenHeight) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::clog << "Failed to init SDL video: "
             << SDL_GetError() << std::endl;
+        
         return 1;
     }
 
@@ -130,5 +131,7 @@ int Map::mapEditorUI(uint32_t screenWidth, uint32_t screenHeight) {
 
     goto sdlexit;
 sdlexit:
+    SDL_DestroyRenderer(RenderContext);
+    SDL_DestroyWindow(WindowContext);
     return 0;
 }

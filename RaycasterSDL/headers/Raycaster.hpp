@@ -1,6 +1,17 @@
 #pragma once
-#ifndef RAYCASTER
-#define RAYCASTER
+#ifndef RAYCASTERSDL_H
+#define RAYCASTERSDL_H
+
+#define SCREENWIDTH 1720
+#define SCREENHEIGHT 1080
+
+#define MAPWIDTH 24
+#define MAPHEIGHT 24
+
+#define TEXTWIDTH 64
+#define TEXTHEIGHT 64
+#define PIXEL_FORMAT SDL_PIXELFORMAT_RGBA8888
+
 
 #define BRED    0b11111111'00000000'00000000'11111111
 #define BBLUE   0b00000000'11111111'00000000'11111111
@@ -16,9 +27,6 @@
 #define BSILVER 0b11001100'11001100'11001100'11111111 
 #define BGRAY   0b10000000'10000000'10000000'11111111 
 #define BTRANS  0b00000000'00000000'00000000'00000000
-
-// Flags
-// #define USE_MAP_EDITOR
 
 // STL
 #include <cmath>
@@ -45,6 +53,8 @@
 #include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_opengl.h>
 #include <SDL3/SDL_mouse.h>
+#include <SDL3/SDL_iostream.h>
+#include <SDL3_Image/SDL_image.h>
+
 
 #endif
-

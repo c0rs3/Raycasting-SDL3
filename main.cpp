@@ -1,7 +1,8 @@
-﻿#include "renderer.h"
-#include "raycaster.h"
+﻿#include <Raycaster.hpp>
+#include <Raycaster/Renderer.hpp>
+#include <Raycaster/Map.hpp>
 
-int worldMap[mapWidth][mapHeight] =
+int worldMap[MAPWIDTH][MAPHEIGHT] =
 {
   {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
   {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
@@ -29,25 +30,19 @@ int worldMap[mapWidth][mapHeight] =
   {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
 };
 
-std::vector<std::thread>threads;
-
 int main() {
-    float posX = 2, posY = 8;      // start position
-    float dirX = -1, dirY = 0;     // initial direction vector
-    float planeX = 0, planeY = 1;  // camera plane
+  float posX = 2, posY = 8;      // start position
+  float dirX = -1, dirY = 0;     // initial direction vector
+  float planeX = 0, planeY = 1;  // camera plane
 
-    float moveSpeed = 0.050f; // the constant value is in squares/second
-    float rotSpeed = 0.50f;   // the constant value is in radians/second
+  float moveSpeed = 0.050f; // the constant value is in squares/second
+  float rotSpeed = 0.50f;   // the constant value is in radians/second
 
-    Map layout = Map((int*)&worldMap, mapWidth, mapHeight);
-    Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
-    Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
-    // threads.push_back(std::thread([&layout]() {layout.mapEditorUI(600, 600);}));
-    // threads.push_back(std::thread([&renderer, &layout]() {renderer.render(layout);}));
-    // for (size_t i = 0; i < threads.size(); i++) {
-    //     threads[i].join();
-    // }
-    layout.mapEditorUI(600, 600);
-    renderer.render(layout);
-    return 0;
+  Map layout = Map((int*)&worldMap, MAPWIDTH, MAPHEIGHT);
+  Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
+  Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
+
+  layout.EditorWindow(600, 600);
+  renderer.render(layout);
+  return 0;
 }

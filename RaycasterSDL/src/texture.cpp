@@ -1,9 +1,5 @@
-#include "texture.h"
-#include "raycaster.h"
-
-// STB Preprocessor must be kept here or multiple definitions will occur
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <Raycaster.hpp>
+#include <Raycaster/Texture.hpp>
 
 uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return (r << 24) | (g << 16) | (b << 8) | a;
@@ -21,24 +17,34 @@ std::string stripString(std::string iString, const std::string& ToStrip) {
 }
 
 std::vector<RGBPixel> loadPNG(const std::string& filename) {
-    int width, height, channels;
-
-    std::unique_ptr<uint8_t> imageData(stbi_load(filename.c_str(), &width, &height, &channels, 3));
-    if (imageData.get() == nullptr) {
-        std::cerr << "Error loading image: " << filename << std::endl;
+    SDL_Surface* sur = IMG_Load(filename.c_str());
+    
+    SDL_Surface* rgbaSurface = SDL_ConvertSurface(sur, SDL_PIXELFORMAT_RGBA8888);
+    if (!rgbaSurface) {
+        std::cerr << "Failed to create surface " << SDL_GetError() << std::endl;
         return std::vector<RGBPixel>();
     }
+    SDL_DestroySurface(sur);
+
+    int width = rgbaSurface->w;
+    int height = rgbaSurface->h;
     std::vector<RGBPixel> pixels(width * height);
+
+    uint8_t* pixelData = static_cast<uint8_t*>(rgbaSurface->pixels);
+
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            int index = (y * width + x) * 3;
-            RGBPixel& pixel = pixels[y * width + x];
-
-            pixel.r = imageData.get()[index];
-            pixel.g = imageData.get()[index + 2]; // Do not touch this
-            pixel.b = imageData.get()[index + 1]; // RBG instead of RGB ffs
+            int srcIndex = (y * rgbaSurface->pitch) + (x * 4);
+            int dstIndex = y * width + x;
+            // pixelData[srcIndex + 0] is the alpha value
+            // pixels[dstIndex].a = pixelData[srcIndex + 0];
+            pixels[dstIndex].g = pixelData[srcIndex + 1];
+            pixels[dstIndex].b = pixelData[srcIndex + 2];
+            pixels[dstIndex].r = pixelData[srcIndex + 3];
         }
     }
+
+    SDL_DestroySurface(rgbaSurface);
     return pixels;
 }
 

@@ -2,10 +2,9 @@
 #ifndef RAYCASTER_MAP
 #define RAYCASTER_MAP
 
-#include "raycaster.h"
+#include <Raycaster.hpp>
 
 struct Map {
-	Map() = default;
 	~Map() = default;
 
 	/*
@@ -16,13 +15,13 @@ struct Map {
 	Map(int* map, unsigned int mapWidth, unsigned int mapHeight)
 		: mData(map), mapWidth(mapWidth), mapHeight(mapHeight) {}
 
-	void mapEditorTerminal(const unsigned int& height, const unsigned int& width);
-	int mapEditorUI(unsigned int screenWidth, unsigned int screenHeight);
+	void EditorCLI(const unsigned int& height, const unsigned int& width);
+	int EditorWindow(unsigned int screenWidth, unsigned int screenHeight);
 	void printMap();
 
-	std::shared_ptr<int> mData;
-	unsigned int mapWidth;
-	unsigned int mapHeight;
+	std::unique_ptr<int> mData;
+	uint32_t mapWidth;
+	uint32_t mapHeight;
 };
 
 #endif

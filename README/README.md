@@ -10,6 +10,8 @@
 - [x] Textures
 - [x] Floor & Ceiling rendering
 - [x] Color Correction
+- [ ] Rewrite and refactor the entire project
+  - [ ] Add entities
 - [ ] Map editor
   - [x] Terminal Editor
   - [x] Convert map mData to 1D array

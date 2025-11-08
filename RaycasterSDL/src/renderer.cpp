@@ -1,16 +1,17 @@
-#include "renderer.h"
-#include "raycaster.h"
+#include <Raycaster/Renderer.hpp>
+#include <Raycaster/Texture.hpp>
 
 int Renderer::render(Map& map) {
     std::unique_ptr<uint32_t>mRenderBuffer(new uint32_t[screenHeight * screenWidth]);
     memset(mRenderBuffer.get(), 0, screenWidth * screenHeight * sizeof(uint32_t));
 
+    uint32_t texWidth = TEXTWIDTH, texHeight = TEXTHEIGHT;
     std::vector<Texture> textureList = std::vector<Texture>();
     textureList.resize(8);
     std::clog << "Working dir: " << std::filesystem::current_path() << '\n';
-    for (unsigned int textureIndex = 0; const auto& entry : std::filesystem::directory_iterator(TEXTURE_ASSET_PATH)) {
+    for (uint32_t textureIndex = 0; const auto& entry : std::filesystem::directory_iterator(TEXTURE_ASSET_PATH)) {
         std::filesystem::path outfilename = entry.path();
-        textureList[textureIndex].addTexturePNG(outfilename.string(), texHeight, texWidth);
+        textureList[textureIndex].addTexturePNG(outfilename.string(), TEXTHEIGHT, TEXTWIDTH);
 
         std::clog << "Compiled texture: "
             << stripString(outfilename.string(), TEXTURE_ASSET_PATH)
@@ -47,7 +48,7 @@ int Renderer::render(Map& map) {
         SDL_PollEvent(&event);
         const bool* keyState = SDL_GetKeyboardState(nullptr);
 
-        //FLOOR CASTING
+        // FLOOR CASTING
         for (int y = 0; y < screenHeight; y++) {
             // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
             float rayDirX0 = mCamera.dirX - mCamera.planeX;
@@ -149,7 +150,7 @@ int Renderer::render(Map& map) {
                     side = 1;
                 }
 
-                if (map.mData.get()[mapX * mapWidth + mapY] > 0) hit = 1;
+                if (map.mData.get()[mapX * map.mapWidth + mapY] > 0) hit = 1;
             }
 
             // Calculate distance projected on mCamera direction
@@ -164,7 +165,7 @@ int Renderer::render(Map& map) {
             int drawEnd = lineHeight / 2 + h / 2;
             if (drawEnd >= h) drawEnd = h - 1;
 
-            int texNum = map.mData.get()[mapX * mapWidth + mapY] - 1;
+            int texNum = map.mData.get()[mapX * map.mapWidth + mapY] - 1;
 
             double wallX;
             if (side == 0) wallX = mCamera.posY + perpWallDist * rayDirY;
@@ -227,16 +228,16 @@ int Renderer::render(Map& map) {
             quit = true;
 
         if (keyState[SDL_SCANCODE_UP]) {
-            if (!map.mData.get()[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)])
+            if (!map.mData.get()[int(mCamera.posX + mCamera.dirX * mCamera.moveSpeed) * map.mapWidth + int(mCamera.posY)])
                 mCamera.posX += mCamera.dirX * mCamera.moveSpeed;
-            if (!map.mData.get()[int(mCamera.posX) * mapWidth + int(mCamera.posY + mCamera.dirY * mCamera.moveSpeed)])
+            if (!map.mData.get()[int(mCamera.posX) * map.mapWidth + int(mCamera.posY + mCamera.dirY * mCamera.moveSpeed)])
                 mCamera.posY += mCamera.dirY * mCamera.moveSpeed;
         }
 
         if (keyState[SDL_SCANCODE_DOWN]) {
-            if (!map.mData.get()[int(mCamera.posX - mCamera.dirX * mCamera.moveSpeed) * mapWidth + int(mCamera.posY)])
+            if (!map.mData.get()[int(mCamera.posX - mCamera.dirX * mCamera.moveSpeed) * map.mapWidth + int(mCamera.posY)])
                 mCamera.posX -= mCamera.dirX * mCamera.moveSpeed;
-            if (!map.mData.get()[int(mCamera.posX) * mapWidth + int(mCamera.posY - mCamera.dirY * mCamera.moveSpeed)])
+            if (!map.mData.get()[int(mCamera.posX) * map.mapWidth + int(mCamera.posY - mCamera.dirY * mCamera.moveSpeed)])
                 mCamera.posY -= mCamera.dirY * mCamera.moveSpeed;
         }
 
@@ -260,8 +261,9 @@ int Renderer::render(Map& map) {
 
         }
         SDL_RenderPresent(mRenderContext);
-
     }
     SDL_DestroyTexture(renderTexture);
+    SDL_DestroyRenderer(mRenderContext);
+    SDL_DestroyWindow(mWindowContext);
     return 0;
 }

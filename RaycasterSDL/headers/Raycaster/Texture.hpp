@@ -2,8 +2,8 @@
 #ifndef RAYCASTER_TEXTURE
 #define RAYCASTER_TEXTURE
 
-#include "raycaster.h"
-#define TEXTURE_ASSET_PATH "assets/textures/"
+#include <Raycaster.hpp>
+#define TEXTURE_ASSET_PATH "RaycasterSDL/assets/textures/"
 
 uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 struct RGBPixel {
