@@ -16,7 +16,7 @@ void Map::printMap() {
     std::cout << std::endl;
 }
 
-void Map::EditorCLI(const uint32_t& height, const uint32_t& width) {
+void Map::EditorCLI(uint32_t height, uint32_t width) {
     mapWidth = width; mapHeight = height;
     printMap();
     uint32_t inputVal;
@@ -47,7 +47,7 @@ int Map::EditorWindow(uint32_t screenWidth, uint32_t screenHeight) {
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::clog << "Failed to init SDL video: "
             << SDL_GetError() << std::endl;
-        
+
         return 1;
     }
 
@@ -82,7 +82,7 @@ int Map::EditorWindow(uint32_t screenWidth, uint32_t screenHeight) {
                     for (size_t i = 0; i < xSize; i++) {
                         renderBuffer.get()[screenWidth * h + w + i] = RGBAcolor;
                     }
-                    };
+                };
 
                 if ((mapWidth * int(ySelectedOld) + int(xSelectedOld))) { drawColor(5, BBLACK); }
                 if (mapSection == (mapWidth * int(ySelected) + int(xSelected))) { drawColor(5, BWHITE); }

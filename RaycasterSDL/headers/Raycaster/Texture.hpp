@@ -12,7 +12,7 @@ struct RGBPixel {
     uint8_t b;
 };
 
-std::string stripString(std::string iString, const std::string& ToStrip);
+std::string stripString(const std::string& iString, const std::string& ToStrip);
 
 class Texture {
 public:

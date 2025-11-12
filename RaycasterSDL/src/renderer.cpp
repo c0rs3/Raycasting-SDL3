@@ -2,8 +2,8 @@
 #include <Raycaster/Texture.hpp>
 
 int Renderer::render(Map& map) {
-    std::unique_ptr<uint32_t>mRenderBuffer(new uint32_t[screenHeight * screenWidth]);
-    memset(mRenderBuffer.get(), 0, screenWidth * screenHeight * sizeof(uint32_t));
+    std::unique_ptr<uint32_t> renderBuffer(new uint32_t[screenHeight * screenWidth]);
+    memset(renderBuffer.get(), 0, screenWidth * screenHeight * sizeof(uint32_t));
 
     uint32_t texWidth = TEXTWIDTH, texHeight = TEXTHEIGHT;
     std::vector<Texture> textureList = std::vector<Texture>();
@@ -86,11 +86,11 @@ int Renderer::render(Map& map) {
 
                 // floor
                 color = textureList[floorTexture][texHeight * texY + texX];
-                mRenderBuffer.get()[y * screenWidth + x] = color;
+                renderBuffer.get()[y * screenWidth + x] = color;
 
                 //ceiling
                 color = textureList[ceilingTexture][texHeight * texY + texX];
-                mRenderBuffer.get()[(screenHeight * screenWidth - (y + 1) * screenWidth) + x] = color;
+                renderBuffer.get()[(screenHeight * screenWidth - (y + 1) * screenWidth) + x] = color;
             }
         }
 
@@ -191,16 +191,16 @@ int Renderer::render(Map& map) {
                     color = textureList[texNum].mData[texHeight * texY + texX];
                 }
                 if (side == 0) {
-                    mRenderBuffer.get()[y * screenWidth + x] = color;
+                    renderBuffer.get()[y * screenWidth + x] = color;
                 }
                 else { // TODO Implement simple alpha adjustments according to the side
-                    mRenderBuffer.get()[y * screenWidth + x] = color;
+                    renderBuffer.get()[y * screenWidth + x] = color;
                 }
             }
         }
 
         SDL_RenderClear(mRenderContext);
-        if (SDL_UpdateTexture(renderTexture, nullptr, mRenderBuffer.get(),
+        if (SDL_UpdateTexture(renderTexture, nullptr, renderBuffer.get(),
             screenWidth * sizeof(uint32_t)) < 0) {
             std::clog << "UpdateTexture failed: " << SDL_GetError() << std::endl;
         }

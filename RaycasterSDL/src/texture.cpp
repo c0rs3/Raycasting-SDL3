@@ -5,7 +5,7 @@ uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
-std::string stripString(std::string iString, const std::string& ToStrip) {
+std::string stripString(const std::string& iString, const std::string& ToStrip) {
     size_t indexToStrip;
     for (size_t i = 0; i < ToStrip.size(); i++) {
         if (ToStrip[i] != iString[i])
