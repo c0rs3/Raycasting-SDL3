@@ -5,6 +5,14 @@ uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
+RGBPixel makeRGB(uint32_t rgba8888) {
+    uint8_t r = rgba8888 >> 24;
+    uint8_t g = (rgba8888 << 8) >> 24;
+    uint8_t b = (rgba8888 << 16) >> 24;
+    uint8_t a = (rgba8888 << 24) >> 24;
+    return {r, g, b};
+};
+
 std::string stripString(const std::string& iString, const std::string& ToStrip) {
     size_t indexToStrip;
     for (size_t i = 0; i < ToStrip.size(); i++) {
@@ -18,7 +26,7 @@ std::string stripString(const std::string& iString, const std::string& ToStrip) 
 
 std::vector<RGBPixel> loadPNG(const std::string& filename) {
     SDL_Surface* sur = IMG_Load(filename.c_str());
-    
+
     SDL_Surface* rgbaSurface = SDL_ConvertSurface(sur, SDL_PIXELFORMAT_RGBA8888);
     if (!rgbaSurface) {
         std::cerr << "Failed to create surface " << SDL_GetError() << std::endl;

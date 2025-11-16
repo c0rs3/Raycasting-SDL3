@@ -191,9 +191,10 @@ int Renderer::render(Map& map) {
                     color = textureList[texNum].mData[texHeight * texY + texX];
                 }
                 if (side == 0) {
-                    renderBuffer.get()[y * screenWidth + x] = color;
+                    RGBPixel colorRGB = makeRGB(color);
+                    renderBuffer.get()[y * screenWidth + x] = makeRGBA8888(colorRGB.r, colorRGB.g, colorRGB.b, 170);
                 }
-                else { // TODO Implement simple alpha adjustments according to the side
+                else {
                     renderBuffer.get()[y * screenWidth + x] = color;
                 }
             }

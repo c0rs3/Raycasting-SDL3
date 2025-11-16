@@ -5,12 +5,15 @@
 #include <Raycaster.hpp>
 #define TEXTURE_ASSET_PATH "RaycasterSDL/assets/textures/"
 
-uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 struct RGBPixel {
     uint8_t r;
     uint8_t g;
     uint8_t b;
 };
+
+uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+
+RGBPixel makeRGB(uint32_t rgba8888);
 
 std::string stripString(const std::string& iString, const std::string& ToStrip);
 

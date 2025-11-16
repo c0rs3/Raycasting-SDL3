@@ -1,5 +1,6 @@
 ﻿#include <Raycaster.hpp>
 #include <Raycaster/Renderer.hpp>
+#include <Raycaster/Texture.hpp>
 #include <Raycaster/Map.hpp>
 
 int worldMap[MAPWIDTH][MAPHEIGHT] =
@@ -30,6 +31,8 @@ int worldMap[MAPWIDTH][MAPHEIGHT] =
   {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
 };
 
+std::vector<std::thread> threads;
+
 int main() {
   float posX = 2, posY = 8;      // start position
   float dirX = -1, dirY = 0;     // initial direction vector
@@ -42,7 +45,12 @@ int main() {
   Camera camera = Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
   Renderer renderer = Renderer(camera, SCREENWIDTH, SCREENHEIGHT);
 
-  layout.EditorWindow(600, 600);
-  renderer.render(layout);
+  threads.push_back(std::thread([&layout] {layout.EditorWindow(600, 600);}));
+  threads.push_back(std::thread([&renderer, &layout] {renderer.render(layout);}));
+  // layout.EditorWindow(600, 600);
+  // renderer.render(layout);
+  threads[1].join();
+  threads[0].join();
+    
   return 0;
 }
