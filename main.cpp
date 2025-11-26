@@ -45,14 +45,7 @@ int main() {
     Camera camera =
         Camera(posX, posY, dirX, dirY, planeX, planeY, moveSpeed, rotSpeed);
     Renderer renderer = { DEFAULT_SCREENWIDTH, DEFAULT_SCREENHEIGHT };
-    // threads.push_back(std::thread(
-    //     [&renderer, &layout, &camera] { renderer.render(camera, layout); }));
-    // threads.push_back(std::thread([&layout] { layout.EditorWindow(600, 600); }));
-    // for (size_t i = 0; i < threads.size(); i++) {
-    //     threads[i].join();
-    // }
-    // layout.EditorWindow(600, 600);
-    renderer.init("wtf");
+    renderer.init("Game");
     renderer.render(camera, layout);
     return 0;
 }
