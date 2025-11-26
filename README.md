@@ -2,9 +2,18 @@
 
 - A simple in-progress ray-casting engine made using SDL3
 
-![graph smh](README.png "Title")
+![Current state](README.png "Title")
 
 ## TODO
+
+- [ ] Refactoring
+  - [x] `unique_ptr` wrappers to every thin, raw pointer
+  - [x] abstractions, encapsulation etc.
+  - [x] General refactoring
+  - [ ] Fix broken texture parsing? writing? reading?
+- [ ] Entities
+- [ ] Advanced levels (optional)
+- [ ] Advanced graphics -> lighting, shadows, fog
 
 - [x] Fundamentals, Base Engine
 - [x] Textures
@@ -18,6 +27,3 @@
   - [x] Add the ability to scroll through segments and change
   - [x] Abstractions and refactoring
 - [x] Fix concurrency issue with map editor and game running together
-- [ ] Entities
-- [ ] Advanced levels (optional)
-- [ ] Advanced graphics -> lighting, shadows, fog
