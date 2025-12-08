@@ -1,41 +1,37 @@
 #pragma once
-#ifndef RAYCASTER_TEXTURE
-#define RAYCASTER_TEXTURE
 
-#include <Raycaster.hpp>
-#define TEXTURE_ASSET_PATH "RaycasterSDL/assets/textures/"
+#include <memory>
+#include <stdint.h>
+#include <string>
+#include <vector>
 
-struct RGBPixel {
+struct RGBAPixel {
     uint8_t r;
     uint8_t g;
     uint8_t b;
+    uint8_t a = 255;
 };
 
-uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
+std::ostream& operator<<(std::ostream& stream, RGBAPixel pixel);
 
-RGBPixel makeRGB(uint32_t rgba8888);
+uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-std::string stripString(const std::string& iString, const std::string& ToStrip);
+RGBAPixel makeRGBA8888(uint32_t rgba8888);
+
+std::string stripFromLeft(const std::string& str_, const std::string& toStrip);
+
+std::vector<RGBAPixel> loadPNG(std::string_view path);
 
 class Texture {
-public:
-    Texture();
-    ~Texture();
-    void addTexturePNG(const std::string& filePath, unsigned int textHeight, 
-        unsigned int textWidth);
-    uint32_t operator[](size_t index);
-    void clearTextures();
-public:
-    std::vector<std::string> textureNameList;
-    unsigned int mHeight;
-    unsigned int mWidth;
-    std::vector<uint32_t> mData;
 private:
+    std::vector<uint32_t> mData;
+    uint32_t mTexHeight;
+    uint32_t mTexWidth;
+
+public:
+    void addTexturePNG(const std::string& filePath, uint32_t textHeight,
+        uint32_t textWidth);
+    uint32_t operator[](size_t index);
 };
 
-
-std::vector<RGBPixel> loadPNG(const std::string& filename);
-
-std::ostream& operator<<(std::ostream& stream, RGBPixel pixel);
-
-#endif
+using TextureList = std::vector<Texture>;

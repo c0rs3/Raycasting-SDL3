@@ -1,42 +1,77 @@
-#include <Raycaster.hpp>
 #include <Raycaster/Texture.hpp>
+
+#include <assert.h>
+#include <filesystem>
+#include <iostream>
+
+
+#include <SDL3_Image/SDL_image.h>
+
+#define _ASSERT assert
+
+void Texture::addTexturePNG(const std::string& filePath,
+    uint32_t textHeight, uint32_t textWidth) {
+    if (!std::filesystem::exists(filePath)) {
+        throw std::runtime_error("Invalid path! " + filePath);
+    }
+    std::vector<RGBAPixel> pixels;
+    mTexWidth = textWidth;
+    mTexHeight = textHeight;
+
+    pixels.resize(mTexHeight * mTexWidth);
+    mData.resize(mTexHeight * mTexWidth);
+    pixels = loadPNG(filePath);
+    for (int x = 0; x < mTexWidth; x++) {
+        for (int y = 0; y < mTexHeight; y++) {
+            RGBAPixel texel = pixels[mTexWidth * y + x];
+            mData[mTexWidth * y + x] =
+                makeRGBA8888(texel.r, texel.g, texel.b, texel.a);
+        }
+    }
+
+};
+
+uint32_t Texture::operator[](size_t index) {
+    _ASSERT(index < mTexHeight * mTexWidth && index >= 0);
+    return mData[index];
+}
 
 uint32_t makeRGBA8888(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     return (r << 24) | (g << 16) | (b << 8) | a;
 }
 
-RGBPixel makeRGB(uint32_t rgba8888) {
+RGBAPixel makeRGBA8888(uint32_t rgba8888) {
     uint8_t r = rgba8888 >> 24;
     uint8_t g = (rgba8888 << 8) >> 24;
     uint8_t b = (rgba8888 << 16) >> 24;
     uint8_t a = (rgba8888 << 24) >> 24;
-    return {r, g, b};
+    return { r, g, b, a };
 };
 
-std::string stripString(const std::string& iString, const std::string& ToStrip) {
+std::string stripFromLeft(const std::string& str_, const std::string& toStrip) {
     size_t indexToStrip;
-    for (size_t i = 0; i < ToStrip.size(); i++) {
-        if (ToStrip[i] != iString[i])
-            return iString;
-        if (i == ToStrip.size() - 1)
+    for (size_t i = 0; i < str_.size(); i++) {
+        if (toStrip[i] != str_[i])
+            return str_;
+        if (i == toStrip.size() - 1)
             indexToStrip = i + 1;
     }
-    return std::string(iString.begin() + indexToStrip, iString.end());
-}
+    return std::string(str_.begin() + indexToStrip, str_.end());
+};
 
-std::vector<RGBPixel> loadPNG(const std::string& filename) {
-    SDL_Surface* sur = IMG_Load(filename.c_str());
+std::vector<RGBAPixel> loadPNG(std::string_view path) {
+    SDL_Surface* sur = IMG_Load(path.data());
 
     SDL_Surface* rgbaSurface = SDL_ConvertSurface(sur, SDL_PIXELFORMAT_RGBA8888);
     if (!rgbaSurface) {
         std::cerr << "Failed to create surface " << SDL_GetError() << std::endl;
-        return std::vector<RGBPixel>();
+        return std::vector<RGBAPixel>();
     }
     SDL_DestroySurface(sur);
 
     int width = rgbaSurface->w;
     int height = rgbaSurface->h;
-    std::vector<RGBPixel> pixels(width * height);
+    std::vector<RGBAPixel> pixels(width * height);
 
     uint8_t* pixelData = static_cast<uint8_t*>(rgbaSurface->pixels);
 
@@ -44,11 +79,10 @@ std::vector<RGBPixel> loadPNG(const std::string& filename) {
         for (int x = 0; x < width; ++x) {
             int srcIndex = (y * rgbaSurface->pitch) + (x * 4);
             int dstIndex = y * width + x;
-            // pixelData[srcIndex + 0] is the alpha value
-            // pixels[dstIndex].a = pixelData[srcIndex + 0];
-            pixels[dstIndex].g = pixelData[srcIndex + 1];
-            pixels[dstIndex].b = pixelData[srcIndex + 2];
             pixels[dstIndex].r = pixelData[srcIndex + 3];
+            pixels[dstIndex].g = pixelData[srcIndex + 2];
+            pixels[dstIndex].b = pixelData[srcIndex + 1];
+            pixels[dstIndex].a = pixelData[srcIndex];
         }
     }
 
@@ -56,39 +90,10 @@ std::vector<RGBPixel> loadPNG(const std::string& filename) {
     return pixels;
 }
 
-std::ostream& operator<<(std::ostream& stream, RGBPixel pixel) {
-    stream << " R: " << (int)pixel.r
-        << " G: " << (int)pixel.g
-        << " B: " << (int)pixel.b << std::endl;
+std::ostream& operator<<(std::ostream& stream, RGBAPixel pixel) {
+    stream << " R: " << (int)pixel.r << \
+        " G: " << (int)pixel.g \
+        << " B: " << (int)pixel.b \
+        << " A: " << (int)pixel.a << std::endl;
     return stream;
-}
-
-Texture::Texture() = default;
-Texture::~Texture() = default;
-
-uint32_t Texture::operator[](size_t index) {
-    return mData[index];
-}
-
-void Texture::addTexturePNG(const std::string& filePath, unsigned int texHeight,
-    unsigned int texWidth) {
-    textureNameList.push_back(stripString(filePath, TEXTURE_ASSET_PATH));
-    if (!std::filesystem::exists(filePath)) {
-        throw std::runtime_error("Invalid path! " + filePath);
-    }
-    std::vector<RGBPixel> pixels;
-    pixels.resize(texHeight * texWidth);
-    mData.resize(texHeight * texWidth);
-
-    pixels = loadPNG(filePath);
-    for (int x = 0; x < texWidth; x++) {
-        for (int y = 0; y < texHeight; y++) {
-            RGBPixel texel = pixels[texWidth * y + x];
-            mData[texWidth * y + x] = makeRGBA8888(texel.r, texel.b, texel.g);
-        }
-    }
-};
-
-void Texture::clearTextures() {
-    mData.clear();
 }

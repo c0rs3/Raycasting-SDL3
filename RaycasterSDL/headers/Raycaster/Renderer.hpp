@@ -1,38 +1,25 @@
 #pragma once
-#include <Raycaster/Entity.hpp>
-#include <Raycaster/map.hpp>
 
-#ifndef	RAYCASTER_RENDERER
-#define RAYCASTER_RENDERER
+#include <string>
+#include <stdint.h>
 
-class Camera {
-public:
-    Camera(double posX = 0, double posY = 0, double dirX = 0,
-        double dirY = 0, double planeX = 0, double planeY = 0.66f, double moveSpeed = 0.1f, double rotSpeed = 0.1f)
-        : posX(posX), posY(posY), dirX(dirX),
-        dirY(dirY), planeX(planeX), planeY(planeY),
-        moveSpeed(moveSpeed), rotSpeed(rotSpeed) {};
-    ~Camera() {};
-
-    double posX, posY;
-    double dirX, dirY;
-    double planeX, planeY; // Vector of the camera plane
-    double moveSpeed, rotSpeed;
-};
+class Map;
+class Camera;
+struct SDL_Window;
+struct SDL_Renderer;
+struct SDL_Texture;
 
 class Renderer {
-public:
-    Renderer(const Camera& camera, unsigned int screenWidth, unsigned int screenHeight)
-        :mCamera(camera), mWindowContext(nullptr), mRenderContext(nullptr), screenWidth(screenWidth), screenHeight(screenHeight) {}
-
-    ~Renderer() = default;
-
-    int render(Map& map);
-
 private:
-    Camera mCamera;
-    SDL_Window* mWindowContext;
-    SDL_Renderer* mRenderContext;
-    unsigned int screenWidth, screenHeight;
+    SDL_Window* mWindow;
+    SDL_Renderer* mRenderer;
+    SDL_Texture* mRenderTextureBuffer;
+    uint32_t mRendererWidth, mRendererHeight;
+
+public:
+    Renderer(uint32_t width, uint32_t height);
+    
+    ~Renderer();
+
+    int32_t gameLoop(Camera& camera_, Map& map_);
 };
-#endif
